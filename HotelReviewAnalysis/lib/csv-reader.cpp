@@ -47,11 +47,9 @@ namespace csvreader {
 		myFile.seekg(std::ios::beg);
 
 		size_t index = 0;
-
 		while (std::getline(myFile, line)) {
 			arr[index++] = line;
 		}
-
 		std::cout << std::format("File Read Succesfully: {}\n", fileName);
 
 		myFile.close();
