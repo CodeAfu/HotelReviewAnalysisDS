@@ -1,5 +1,5 @@
 #include <iostream>
-#include "LinkedList.h"
+#include "linkedlist.h"
 #include "Node.h";
 
 LinkedList::~LinkedList() {
@@ -11,14 +11,14 @@ LinkedList::~LinkedList() {
 	}
 }
 
-void LinkedList::insertAtBeginning(int val) {
+void LinkedList::insertAtBeginning(std::string val) {
 	Node* n = new Node();
 	n->value = val;
 	n->next = head;
 	head = n;
 }
 
-void LinkedList::insertAtEnd(int val) {
+void LinkedList::insertAtEnd(std::string val) {
 	Node* n = new Node();
 	n->value = val;
 	n->next = NULL;

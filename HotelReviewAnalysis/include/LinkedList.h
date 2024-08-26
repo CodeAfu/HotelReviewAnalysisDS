@@ -1,5 +1,5 @@
 #pragma once
-#include "Node.h"
+#include "node.h"
 
 class LinkedList {
 public:
@@ -7,8 +7,8 @@ public:
 	LinkedList() : head(NULL), tail(NULL) { }
 	~LinkedList();
 
-	void insertAtBeginning(int value);
-	void insertAtEnd(int value);
+	void insertAtBeginning(std::string value);
+	void insertAtEnd(std::string value);
 	void display();
 
 private:

@@ -1,8 +1,9 @@
 #pragma once
 
 struct Node {
-	int value;
+	std::string value;
 	Node* next;
 
-	// Node(int val, Node* nxt) : value(val), next(nxt) { }
+	Node() { }
+	Node(std::string val, Node* nxt) : value(val), next(nxt) { }
 };
