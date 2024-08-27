@@ -6,18 +6,23 @@ public:
 	LinkedList() : head(NULL), current(NULL) { }
 	~LinkedList();
 
-	void insertAtBeginning(std::string value);
-	void insertAtEnd(std::string value);
+	// Build Linked List
+	void insertAtBeginning(const std::string value);
+	void insertAtEnd(const std::string value);
 
+	// Query and Controls
 	std::string getValue();
+	Node* searchValue(const std::string& value);
 	bool hasNext();
 	void next();
 	void reset();
 
+	// Print
 	void display();
 
 private:
 	Node* head;
 	Node* current;
+	Node* tail;
 };
 
