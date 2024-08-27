@@ -1,6 +1,4 @@
 #pragma once
-#include <iostream>
-#include "linkedlist.h"
 
 namespace csvreader {
 	std::string asString(const std::string& fileName);

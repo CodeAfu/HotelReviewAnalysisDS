@@ -1,3 +1,6 @@
+#include <iostream>
+#include <string>
+
 #include "sentiment_analysis.h"
 #include "linkedlist.h"
 #include "csv_reader.h"
