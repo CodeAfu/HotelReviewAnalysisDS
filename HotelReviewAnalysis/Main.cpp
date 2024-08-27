@@ -1,7 +1,8 @@
 #include <iostream>;
 #include <format>;
 #include "linkedlist.h"
-#include "csv-reader.h"
+#include "csv_reader.h"
+#include "sentiment_analysis.h"
 
 constexpr char NEGATIVE_WORDS_FILE[] = "data/negative-words.txt";
 constexpr char POSITIVE_WORDS_FILE[] = "data/positive-words.txt";
@@ -36,7 +37,9 @@ int main() {
 	//clearMem(negativeWordsArr);
 	//clearMem(positiveWordsArr);
 	//clearMem(allReviewsArr);
-	
+
+	analyzer::run();
+
 	return 0;
 }
 

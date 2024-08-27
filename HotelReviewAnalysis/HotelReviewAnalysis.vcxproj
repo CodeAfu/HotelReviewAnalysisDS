@@ -18,6 +18,18 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\csv_reader.cpp" />
+    <ClCompile Include="lib\linkedlist.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="sentiment_analysis.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\csv_reader.h" />
+    <ClInclude Include="include\linkedlist.h" />
+    <ClInclude Include="include\node.h" />
+    <ClInclude Include="sentiment_analysis.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -140,16 +152,6 @@
       <AdditionalLibraryDirectories>$(ProjectDir)lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="lib\csv-reader.cpp" />
-    <ClCompile Include="lib\linkedlist.cpp" />
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\csv-reader.h" />
-    <ClInclude Include="include\linkedlist.h" />
-    <ClInclude Include="include\node.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
