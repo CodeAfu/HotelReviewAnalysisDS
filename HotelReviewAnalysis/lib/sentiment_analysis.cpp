@@ -34,7 +34,7 @@ namespace analyzer {
 
 	Result analyze(const Data& data);
 	void processWord(std::string& word);
-	void matchWords(const std::string&, const Data& data, Result& res);
+	void matchWord(const std::string&, const Data& data, Result& res);
 
 	void run() {
 		LinkedList reviews = csvreader::asLL(REVIEWS_FILE);
@@ -64,7 +64,7 @@ namespace analyzer {
 		std::string s;
 		while (std::getline(iss, s, ' ')) {
 			processWord(s);
-			matchWords(s, data, res);
+			matchWord(s, data, res);
 			std::cout << s << std::endl;
 		}
 
@@ -75,7 +75,7 @@ namespace analyzer {
 		return res;
 	}
 
-	void matchWords(const std::string&, const Data& data, Result& res) {
+	void matchWord(const std::string&, const Data& data, Result& res) {
 		
 	}
 
