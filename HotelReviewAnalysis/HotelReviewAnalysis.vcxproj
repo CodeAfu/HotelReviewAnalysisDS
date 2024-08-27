@@ -21,8 +21,8 @@
   <ItemGroup>
     <ClCompile Include="lib\csv_reader.cpp" />
     <ClCompile Include="lib\linkedlist.cpp" />
+    <ClCompile Include="lib\sentiment_analysis.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="sentiment_analysis.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\csv_reader.h" />

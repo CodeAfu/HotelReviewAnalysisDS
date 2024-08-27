@@ -24,7 +24,7 @@
     <ClCompile Include="lib\linkedlist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sentiment_analysis.cpp">
+    <ClCompile Include="lib\sentiment_analysis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
