@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="lib\csv_reader.cpp" />
     <ClCompile Include="lib\linkedlist.cpp" />
+    <ClCompile Include="lib\review.cpp" />
     <ClCompile Include="lib\sentiment_analysis.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -28,7 +29,8 @@
     <ClInclude Include="include\csv_reader.h" />
     <ClInclude Include="include\linkedlist.h" />
     <ClInclude Include="include\node.h" />
-    <ClInclude Include="sentiment_analysis.h" />
+    <ClInclude Include="include\review.h" />
+    <ClInclude Include="include\sentiment_analysis.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

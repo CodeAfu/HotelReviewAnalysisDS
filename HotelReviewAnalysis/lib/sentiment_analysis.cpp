@@ -6,9 +6,12 @@
 #include <chrono>
 #include <ios>
 
-#include "sentiment_analysis.h"
+#include "review.h"
 #include "linkedlist.h"
 #include "csv_reader.h"
+#include "sentiment_analysis.h"
+
+#define LOG(x) std::cout << x << std::endl
 
 using Ms = std::chrono::milliseconds;
 using Timer = std::chrono::high_resolution_clock;
@@ -17,15 +20,26 @@ constexpr char NEGATIVE_WORDS_FILE[] = "data/negative-words.txt";
 constexpr char POSITIVE_WORDS_FILE[] = "data/positive-words.txt";
 constexpr char REVIEWS_FILE[] = "data/tripadvisor_hotel_reviews.csv";
 
+
+struct Data {
+	LinkedList<Review>& reviews;
+	LinkedList<std::string>& positiveWords;
+	LinkedList<std::string>& negativeWords;
+
+	Data(LinkedList<Review>& rev, LinkedList<std::string>& pos, LinkedList<std::string>& neg)
+		: reviews(rev), positiveWords(pos), negativeWords(neg) 
+	{ }
+};
+
+
 struct Result {
-	LinkedList pos;
-	LinkedList neg;
+	LinkedList<std::string> pos;
+	LinkedList<std::string> neg;
 	unsigned int numReviews = 0;
 	unsigned int numWords = 0;
 	unsigned int numPos = 0;
 	unsigned int numNeg = 0;
 	Ms duration;
-
 
 	void summary() {
 		std::cout << std::format("Number of Reviews: {}\n", numReviews);
@@ -36,35 +50,17 @@ struct Result {
 	}
 };
 
-struct Review {
-	const std::string comment;
-	const int rating;
-
-	Review(const std::string comment, int rating) 
-		: comment(comment), rating(rating) { }
-};
-
-struct Data {
-	LinkedList& reviews;
-	LinkedList& positiveWords;
-	LinkedList& negativeWords;
-
-	Data(LinkedList& rev, LinkedList& pos, LinkedList& neg)
-		: reviews(rev), positiveWords(pos), negativeWords(neg) 
-	{ }
-};
 
 namespace analyzer {
-
 	Result analyze(const Data& data);
-	void processWord(std::string& word);
+	Review buildReview(const Review& review);
 	void buildResult(const std::string& word, const Data& data, Result& res);
-	Review buildReview(const std::string& review);
+	void processWord(std::string& word);
 
 	void run() {
-		LinkedList reviews = csvreader::asLL(REVIEWS_FILE);
-		LinkedList positiveWords = csvreader::asLL(POSITIVE_WORDS_FILE);
-		LinkedList negativeWords = csvreader::asLL(NEGATIVE_WORDS_FILE);
+		LinkedList<Review> reviews = csvreader::asLLReview(REVIEWS_FILE); // NEEDS TO BE FIXED
+		LinkedList<std::string> positiveWords = csvreader::asLLString(POSITIVE_WORDS_FILE);
+		LinkedList<std::string> negativeWords = csvreader::asLLString(NEGATIVE_WORDS_FILE);
 
 		// Pause and Clear console
 		//std::cin.get();
@@ -80,27 +76,19 @@ namespace analyzer {
 	Result analyze(const Data& data) {
 		const auto start = Timer::now();
 		const int DEBUG_LIMIT = 20; // set to -1 for real use
-
 		int iterations = 0;
 
-		// Skip Header Contents
-		data.reviews.next();
-
-		// Init
+		// Process Reviews
 		Result res;
-
-		/// Wrap these in while loop
 		while (data.reviews.getCurrentNode()) {
-			//std::cin.get();
+			std::cin.get();
 			std::system("cls");
 
-			const std::string& reviewStr = data.reviews.getValue();
-			Review review = buildReview(reviewStr);
-			std::cout << "Review: " << review.comment << std::endl;
-			std::cout << "Rating: " << review.rating << std::endl;
+			std::cout << "Review: " << data.reviews.getCurrentNode()->value.comment << std::endl;
+			std::cout << "Rating: " << data.reviews.getCurrentNode()->value.rating << std::endl;
 
 			// Split String and build review
-			std::istringstream iss(review.comment);
+			std::istringstream iss(data.reviews.getCurrentNode()->value.comment);
 			std::string s;
 			while (std::getline(iss, s, ' ')) {
 				processWord(s);
@@ -110,30 +98,28 @@ namespace analyzer {
 			std::cout << std::endl;
 			data.reviews.next();
 
-
-			/// Remove After Testing
+			// Limit Iterations for Debug
 			iterations++;
 			if (iterations == DEBUG_LIMIT) {
 				break;
 			}
 		}
-		/// endloop
 
 		// Calculate Time
-		const auto duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
-		res.duration = duration;
+		res.duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
 		return res;
 	}
 
-	Review buildReview(const std::string& review) {
-		size_t lastComma = review.rfind(',');
+#if 0;
+	Review buildReview(const Review& review) {
+		size_t lastComma = review.comment.rfind(',');
 
-		std::string rev;
+		std::string comment;
 		int rating;
 
 		if (lastComma != std::string::npos) {
-			rev = review.substr(0, lastComma);
-			std::string strRating = review.substr(lastComma + 1);
+			comment = review.comment.substr(0, lastComma);
+			std::string strRating = review.comment.substr(lastComma + 1);
 
 			// Trim
 			strRating.erase(0, strRating.find_first_not_of(" \t\n\r\f\v"));
@@ -144,8 +130,9 @@ namespace analyzer {
 			throw std::runtime_error("Comma not found in the entry [buildReview]");
 		}
 
-		return Review(rev, rating);
+		return Review(comment, rating);
 	}
+#endif
 
 	void buildResult(const std::string& word, const Data& data, Result& res) {
 

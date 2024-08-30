@@ -1,21 +1,29 @@
 #pragma once
-#include "node.h"
 
+#include "node.h"
+#include "review.h"
+
+template<typename T>
 class LinkedList {
 public:
-	LinkedList() : head(NULL), current(NULL) { }
+	LinkedList();
 	~LinkedList();
 
+public:
+	LinkedList(const LinkedList<T>& other);
+	LinkedList<T>& operator=(const LinkedList<T>& other);
+
+public:
 	// Build Linked List
-	void insertAtBeginning(const std::string value);
-	void insertAtEnd(const std::string value);
+	void insertAtBeginning(const T& value);
+	void insertAtEnd(const T& value);
 
 	// Query and Controls
-	std::string getValue();
-	std::string& getValueByRef();
-	const std::string& getValue() const;
-	Node* getCurrentNode();
-	Node* searchValue(const std::string& value);
+	T getValue();
+	T& getValueByRef();
+	const T& getValue() const;
+	Node<T>* getCurrentNode();
+	Node<T>* searchValue(const T& value);
 	bool hasNext();
 	void next();
 	void reset();
@@ -24,8 +32,12 @@ public:
 	void display();
 
 private:
-	Node* head;
-	Node* current;
-	Node* tail;
+	Node<T>* head;
+	Node<T>* current;
+	Node<T>* tail;
+
+	void copyFrom(const LinkedList<T>& other);
 };
 
+extern template class LinkedList<Review>;
+extern template class LinkedList<std::string>;

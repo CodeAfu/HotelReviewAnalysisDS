@@ -19,9 +19,9 @@ int main() {
 
 
 	/// As Linked List
-	//LinkedList allReviewsLL = csvreader::asLL(REVIEWS_FILE);
-	//LinkedList positiveWordsLL = csvreader::asLL(POSITIVE_WORDS_FILE);
-	//LinkedList negativeWordsLL = csvreader::asLL(NEGATIVE_WORDS_FILE);
+	//LinkedList allReviewsLL = csvreader::asLLString(REVIEWS_FILE);
+	//LinkedList positiveWordsLL = csvreader::asLLString(POSITIVE_WORDS_FILE);
+	//LinkedList negativeWordsLL = csvreader::asLLString(NEGATIVE_WORDS_FILE);
 
 
 	/// As Array

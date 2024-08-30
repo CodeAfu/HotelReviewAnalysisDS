@@ -1,19 +1,42 @@
 #include <iostream>
-#include "linkedlist.h"
-#include "Node.h";
+#include "linkedlist.h";
 
-LinkedList::~LinkedList() {
-	Node* n = head;
+template<typename T>
+LinkedList<T>::LinkedList() : head(nullptr), current(nullptr), tail(nullptr) { }
+
+template<typename T>
+LinkedList<T>::~LinkedList() {
+	Node<T>* n = head;
 	while (n) {
-		Node* next = n->next;
+		Node<T>* next = n->next;
 		delete n;
 		n = next;
 	}
 }
 
-void LinkedList::insertAtBeginning(const std::string val) {
-	Node* n = new Node();
+template<typename T>
+LinkedList<T>::LinkedList(const LinkedList<T>& other) 
+	: head(nullptr), current(nullptr), tail(nullptr) {
+	copyFrom(other);
+}
 
+template<typename T>
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
+	if (this != &other) {
+		this->~LinkedList();
+		head = current = tail = nullptr;
+		Node<T>* temp = other.head;
+		while (temp) {
+			insertAtEnd(temp->value);
+			temp = temp->next;
+		}
+	}
+	return *this;
+}
+
+template<typename T>
+void LinkedList<T>::insertAtBeginning(const T& val) {
+	Node<T>* n = new Node<T>();
 	n->value = val;
 	n->next = head;
 	head = n;
@@ -24,10 +47,11 @@ void LinkedList::insertAtBeginning(const std::string val) {
 	}
 }
 
-void LinkedList::insertAtEnd(const std::string val) {
-	Node* n = new Node();
+template<typename T>
+void LinkedList<T>::insertAtEnd(const T& val) {
+	Node<T>* n = new Node<T>();
 	n->value = val;
-	n->next = NULL;
+	n->next = nullptr;
 	tail = n;
 
 	if (!head) {
@@ -37,29 +61,28 @@ void LinkedList::insertAtEnd(const std::string val) {
 		return;
 	} 
 
-	Node* temp = head;
-	while (temp->next) {
-		temp = temp->next;
-	}
-
-	temp->next = n;
+	tail->next = n;
+	tail = n;
 }
 
-std::string LinkedList::getValue() {
+template<typename T>
+T LinkedList<T>::getValue() {
 	if (!current) {
 		throw std::runtime_error("Current Node is null.");
 	}
 	return current->value;
 }
 
-std::string& LinkedList::getValueByRef() {
+template<typename T>
+T& LinkedList<T>::getValueByRef() {
 	if (!current) {
 		throw std::runtime_error("Current Node is null.");
 	}
 	return current->value;
 }
 
-const std::string& LinkedList::getValue() const {
+template<typename T>
+const T& LinkedList<T>::getValue() const {
 	if (!current) {
 		throw std::runtime_error("Current node is null.");
 	}
@@ -67,21 +90,24 @@ const std::string& LinkedList::getValue() const {
 }
 
 
-Node* LinkedList::getCurrentNode() {
+template<typename T>
+Node<T>* LinkedList<T>::getCurrentNode() {
 	if (!current) {
 		throw std::runtime_error("Current node is null.");
 	}
 	return current;
 }
 
-Node* LinkedList::searchValue(const std::string& value) {
-	Node* n = current;
-	if (current == tail) {
-		std::cout << "[LOG] Linked List current pointer needs to be reset.\n";
-		std::cout << "[WARNING] Returning Null Pointer.\n";
-		return nullptr;
-	}
-
+template<typename T>
+Node<T>* LinkedList<T>::searchValue(const T& value) {
+	/// Test
+	//Node<T>* n = current;
+	//if (current != head) {
+	//	std::cout << "[LOG] Linked List current pointer needs to be reset.\n";
+	//	std::cout << "[WARNING] Returning Null Pointer.\n";
+	//	return nullptr;
+	//}
+	Node<T>* n = head;
 	while (n) {
 		if (n->value == value) {
 			return n;
@@ -92,31 +118,36 @@ Node* LinkedList::searchValue(const std::string& value) {
 }
 
 
-bool LinkedList::hasNext() {
+template<typename T>
+bool LinkedList<T>::hasNext() {
 	return current && current->next;
 }
 
-void LinkedList::next() {
+template<typename T>
+void LinkedList<T>::next() {
 	if (!hasNext()) {
 		std::cout << "No new node available.\n";
+		return;
 	}
 	current = current->next;
 }
 
-void LinkedList::reset() {
+template<typename T>
+void LinkedList<T>::reset() {
 	if (!current) {
 		throw std::runtime_error("Current Node is null.");
 	}
 	current = head;
 }
 
-void LinkedList::display() {
+template<typename T>
+void LinkedList<T>::display() {
 	if (!head) {
 		std::cout << "LinkedList not initialized\n";
 		return;
 	}
 
-	Node* temp = head;
+	Node<T>* temp = head;
 
 	while (temp) {
 		std::cout << temp->value << " -> ";
@@ -125,3 +156,14 @@ void LinkedList::display() {
 	std::cout << "NULL\n";
 }
 
+template<typename T>
+void LinkedList<T>::copyFrom(const LinkedList<T>& other) {
+	Node<T>* temp = other.head;
+	while (temp) {
+		insertAtEnd(temp->value);
+		temp = temp->next;
+	}
+}
+
+template class LinkedList<Review>;
+template class LinkedList<std::string>;

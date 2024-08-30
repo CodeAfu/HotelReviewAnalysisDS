@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <format>
+
 #include "linkedlist.h"
 #include "csv_reader.h"
 
@@ -56,8 +57,8 @@ namespace csvreader {
 		myFile.close();
 	}
 
-	LinkedList asLL(const std::string& fileName) {
-		LinkedList ll;
+	LinkedList<std::string> asLLString(const std::string& fileName) {
+		LinkedList<std::string> ll;
 		std::string line;
 		std::ifstream myFile(fileName);
 
@@ -68,6 +69,31 @@ namespace csvreader {
 
 		while (getline(myFile, line)) {
 			ll.insertAtEnd(line);
+		}
+
+		std::cout << std::format("File Read Succesully: {}\n", fileName);
+		myFile.close();
+
+		return ll;
+	}
+
+	LinkedList<Review> asLLReview(const std::string& fileName) {
+		LinkedList<Review> ll;
+		std::string line;
+		std::ifstream myFile(fileName);
+
+		if (!myFile.is_open()) {
+			std::cerr << "Unable to open file.\n";
+			return ll;
+		}
+
+		// Skip header
+		std::string header;
+		std::getline(myFile, header);
+
+		while (getline(myFile, line)) {
+			Review rev(line);
+			ll.insertAtEnd(rev);
 		}
 
 		std::cout << std::format("File Read Succesully: {}\n", fileName);

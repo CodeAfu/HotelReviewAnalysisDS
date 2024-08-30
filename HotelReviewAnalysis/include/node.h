@@ -1,9 +1,11 @@
 #pragma once
 
+template<typename T>
 struct Node {
-	std::string value;
+	T value;
 	Node* next;
 
 	Node() { }
-	Node(std::string val, Node* nxt) : value(val), next(nxt) { }
+	Node(T& val, Node* nxt) : value(val), next(nxt) { }
+	Node(T& val) : value(val), next(nullptr) { }
 };
