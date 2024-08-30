@@ -79,34 +79,28 @@ namespace analyzer {
 
 	Result analyze(const Data& data) {
 		const auto start = Timer::now();
-		const int DEBUG_LIMIT = 4; // set to -1 for real use
+		const int DEBUG_LIMIT = 20; // set to -1 for real use
 
 		int iterations = 0;
 
 		// Skip Header Contents
 		data.reviews.next();
 
-		// [DEBUG] Build Review Struct
-		const std::string& reviewStr = data.reviews.getValue();
-		Review review = buildReview(reviewStr);
-		std::cout << review.comment << std::endl;
-		std::cout << "Rating: " << review.rating << std::endl;
-		std::cin.get();
-
 		// Init
 		Result res;
 
-#if 0
 		/// Wrap these in while loop
 		while (data.reviews.getCurrentNode()) {
+			//std::cin.get();
 			std::system("cls");
 
-			std::string review = data.reviews.getValue();
-			std::cout << "Review:" << std::endl;
-			std::cout << review << std::endl;
+			const std::string& reviewStr = data.reviews.getValue();
+			Review review = buildReview(reviewStr);
+			std::cout << "Review: " << review.comment << std::endl;
+			std::cout << "Rating: " << review.rating << std::endl;
 
 			// Split String and build review
-			std::istringstream iss(review);
+			std::istringstream iss(review.comment);
 			std::string s;
 			while (std::getline(iss, s, ' ')) {
 				processWord(s);
@@ -124,7 +118,6 @@ namespace analyzer {
 			}
 		}
 		/// endloop
-#endif
 
 		// Calculate Time
 		const auto duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
@@ -164,7 +157,7 @@ namespace analyzer {
 			if (s == word) {
 				res.pos.insertAtEnd(word);
 				res.numPos++;
-				std::cout << s << ":";
+				std::cout << s << "+";
 				//break;
 			}
 
@@ -182,7 +175,7 @@ namespace analyzer {
 			if (s == word) {
 				res.neg.insertAtEnd(word);
 				res.numNeg++;
-				std::cout << s << ":";
+				std::cout << s << "-";
 				//break;
 			}
 
