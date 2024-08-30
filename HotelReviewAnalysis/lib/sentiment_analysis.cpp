@@ -36,6 +36,14 @@ struct Result {
 	}
 };
 
+struct Review {
+	const std::string comment;
+	const int rating;
+
+	Review(const std::string comment, int rating) 
+		: comment(comment), rating(rating) { }
+};
+
 struct Data {
 	LinkedList& reviews;
 	LinkedList& positiveWords;
@@ -51,6 +59,7 @@ namespace analyzer {
 	Result analyze(const Data& data);
 	void processWord(std::string& word);
 	void buildResult(const std::string& word, const Data& data, Result& res);
+	Review buildReview(const std::string& review);
 
 	void run() {
 		LinkedList reviews = csvreader::asLL(REVIEWS_FILE);
@@ -70,16 +79,24 @@ namespace analyzer {
 
 	Result analyze(const Data& data) {
 		const auto start = Timer::now();
-		const int DEBUG_LIMIT = 50;
+		const int DEBUG_LIMIT = 4; // set to -1 for real use
 
 		int iterations = 0;
 
 		// Skip Header Contents
 		data.reviews.next();
 
+		// [DEBUG] Build Review Struct
+		const std::string& reviewStr = data.reviews.getValue();
+		Review review = buildReview(reviewStr);
+		std::cout << review.comment << std::endl;
+		std::cout << "Rating: " << review.rating << std::endl;
+		std::cin.get();
+
 		// Init
 		Result res;
 
+#if 0
 		/// Wrap these in while loop
 		while (data.reviews.getCurrentNode()) {
 			std::system("cls");
@@ -107,13 +124,34 @@ namespace analyzer {
 			}
 		}
 		/// endloop
-
+#endif
 
 		// Calculate Time
 		const auto duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
-
 		res.duration = duration;
 		return res;
+	}
+
+	Review buildReview(const std::string& review) {
+		size_t lastComma = review.rfind(',');
+
+		std::string rev;
+		int rating;
+
+		if (lastComma != std::string::npos) {
+			rev = review.substr(0, lastComma);
+			std::string strRating = review.substr(lastComma + 1);
+
+			// Trim
+			strRating.erase(0, strRating.find_first_not_of(" \t\n\r\f\v"));
+			strRating.erase(strRating.find_last_not_of(" \t\n\r\f\v") + 1);
+
+			rating = std::stoi(strRating);
+		} else {
+			throw std::runtime_error("Comma not found in the entry [buildReview]");
+		}
+
+		return Review(rev, rating);
 	}
 
 	void buildResult(const std::string& word, const Data& data, Result& res) {

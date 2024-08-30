@@ -52,6 +52,21 @@ std::string LinkedList::getValue() {
 	return current->value;
 }
 
+std::string& LinkedList::getValueByRef() {
+	if (!current) {
+		throw std::runtime_error("Current Node is null.");
+	}
+	return current->value;
+}
+
+const std::string& LinkedList::getValue() const {
+	if (!current) {
+		throw std::runtime_error("Current node is null.");
+	}
+	return current->value;
+}
+
+
 Node* LinkedList::getCurrentNode() {
 	if (!current) {
 		throw std::runtime_error("Current node is null.");

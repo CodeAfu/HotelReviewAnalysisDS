@@ -12,6 +12,8 @@ public:
 
 	// Query and Controls
 	std::string getValue();
+	std::string& getValueByRef();
+	const std::string& getValue() const;
 	Node* getCurrentNode();
 	Node* searchValue(const std::string& value);
 	bool hasNext();
