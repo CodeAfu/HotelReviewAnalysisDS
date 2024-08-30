@@ -2,11 +2,16 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <format>
+#include <chrono>
 #include <ios>
 
 #include "sentiment_analysis.h"
 #include "linkedlist.h"
 #include "csv_reader.h"
+
+using Ms = std::chrono::milliseconds;
+using Timer = std::chrono::high_resolution_clock;
 
 constexpr char NEGATIVE_WORDS_FILE[] = "data/negative-words.txt";
 constexpr char POSITIVE_WORDS_FILE[] = "data/positive-words.txt";
@@ -15,9 +20,20 @@ constexpr char REVIEWS_FILE[] = "data/tripadvisor_hotel_reviews.csv";
 struct Result {
 	LinkedList pos;
 	LinkedList neg;
-	unsigned int numReviews;
-	unsigned int numPos;
-	unsigned int numNeg;
+	unsigned int numReviews = 0;
+	unsigned int numWords = 0;
+	unsigned int numPos = 0;
+	unsigned int numNeg = 0;
+	Ms duration;
+
+
+	void summary() {
+		std::cout << std::format("Number of Reviews: {}\n", numReviews);
+		std::cout << std::format("Number of Words: {}\n", numWords);
+		std::cout << std::format("Number of Positives: {}\n", numPos);
+		std::cout << std::format("Number of Negatives: {}\n", numNeg);
+		std::cout << std::format("Time elapsed: {}\n", duration);
+	}
 };
 
 struct Data {
@@ -25,7 +41,7 @@ struct Data {
 	LinkedList& positiveWords;
 	LinkedList& negativeWords;
 
-	Data(LinkedList& rev, LinkedList& pos, LinkedList& neg) 
+	Data(LinkedList& rev, LinkedList& pos, LinkedList& neg)
 		: reviews(rev), positiveWords(pos), negativeWords(neg) 
 	{ }
 };
@@ -34,7 +50,7 @@ namespace analyzer {
 
 	Result analyze(const Data& data);
 	void processWord(std::string& word);
-	void matchWord(const std::string&, const Data& data, Result& res);
+	void buildResult(const std::string& word, const Data& data, Result& res);
 
 	void run() {
 		LinkedList reviews = csvreader::asLL(REVIEWS_FILE);
@@ -46,10 +62,18 @@ namespace analyzer {
 		std::system("cls");
 
 		Data data(reviews, positiveWords, negativeWords);
-		Result f = analyze(data);
+		Result res = analyze(data);
+		std::system("cls");
+
+		res.summary();
 	}
 
 	Result analyze(const Data& data) {
+		const auto start = Timer::now();
+		const int DEBUG_LIMIT = 50;
+
+		int iterations = 0;
+
 		// Skip Header Contents
 		data.reviews.next();
 
@@ -57,26 +81,84 @@ namespace analyzer {
 		Result res;
 
 		/// Wrap these in while loop
+		while (data.reviews.getCurrentNode()) {
+			std::system("cls");
 
-		// Split String
-		std::string review = data.reviews.getValue();
-		std::istringstream iss(review);
-		std::string s;
-		while (std::getline(iss, s, ' ')) {
-			processWord(s);
-			matchWord(s, data, res);
-			std::cout << s << std::endl;
+			std::string review = data.reviews.getValue();
+			std::cout << "Review:" << std::endl;
+			std::cout << review << std::endl;
+
+			// Split String and build review
+			std::istringstream iss(review);
+			std::string s;
+			while (std::getline(iss, s, ' ')) {
+				processWord(s);
+				buildResult(s, data, res);
+			}
+			res.numReviews++;
+			std::cout << std::endl;
+			data.reviews.next();
+
+
+			/// Remove After Testing
+			iterations++;
+			if (iterations == DEBUG_LIMIT) {
+				break;
+			}
 		}
-
-		data.reviews.next();
-
 		/// endloop
 
+
+		// Calculate Time
+		const auto duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
+
+		res.duration = duration;
 		return res;
 	}
 
-	void matchWord(const std::string&, const Data& data, Result& res) {
-		
+	void buildResult(const std::string& word, const Data& data, Result& res) {
+
+		// Calc Positive
+		while (data.positiveWords.getCurrentNode()) {
+
+			const std::string& s = data.positiveWords.getValue();
+
+			if (s == word) {
+				res.pos.insertAtEnd(word);
+				res.numPos++;
+				std::cout << s << ":";
+				//break;
+			}
+
+			if (!data.positiveWords.hasNext()) 
+				break;
+
+			data.positiveWords.next();
+		}
+
+		// Calc Negative
+		while (data.negativeWords.getCurrentNode()) {
+
+			const std::string& s = data.negativeWords.getValue();
+
+			if (s == word) {
+				res.neg.insertAtEnd(word);
+				res.numNeg++;
+				std::cout << s << ":";
+				//break;
+			}
+
+			if (!data.negativeWords.hasNext())
+				break;
+
+			data.negativeWords.next();
+		}
+
+		// Reset Position of LinkedList Current Pointer
+		data.positiveWords.reset();
+		data.negativeWords.reset();
+
+		res.numWords++;
 	}
 
 	void processWord(std::string& word) {

@@ -12,6 +12,7 @@ public:
 
 	// Query and Controls
 	std::string getValue();
+	Node* getCurrentNode();
 	Node* searchValue(const std::string& value);
 	bool hasNext();
 	void next();

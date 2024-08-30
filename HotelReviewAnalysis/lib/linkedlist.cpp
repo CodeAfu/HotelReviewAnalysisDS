@@ -52,6 +52,13 @@ std::string LinkedList::getValue() {
 	return current->value;
 }
 
+Node* LinkedList::getCurrentNode() {
+	if (!current) {
+		throw std::runtime_error("Current node is null.");
+	}
+	return current;
+}
+
 Node* LinkedList::searchValue(const std::string& value) {
 	Node* n = current;
 	if (current == tail) {
