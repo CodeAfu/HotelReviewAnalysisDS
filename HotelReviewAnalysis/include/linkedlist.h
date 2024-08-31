@@ -3,13 +3,66 @@
 #include "node.h"
 #include "review.h"
 
+#if 0
+template<typename T>
+class LinkedList;
+
+template<typename T>
+class LinkedListIterator {
+public:
+	using NodeType = Node<T>;
+	using PointerType = NodeType*;
+	using ReferenceType = T&;
+
+public:
+	LinkedListIterator(PointerType ptr) : m_Ptr(ptr) { }
+
+	ReferenceType operator*() const {
+		return m_Ptr->value;
+	}
+
+	LinkedListIterator& operator++() {
+		m_Ptr = m_Ptr->next;
+		return *this;
+	}
+
+	LinkedListIterator operator++(int) {
+		LinkedListIterator temp = *this;
+		m_Ptr = m_Pr->next;
+		return temp;
+	}
+
+	bool operator==(const LinkedListIterator& other) const {
+		return m_Ptr == other.m_Ptr;
+	}
+
+	bool operator!=(const LinkedListIterator& other) const {
+		return m_Ptr != other.m_Ptr;
+	}
+
+	ReferenceType operator*() const {
+		return m_Ptr->value;
+	}
+
+private:
+	PointerType m_Ptr;
+};
+
+#endif
+
 template<typename T>
 class LinkedList {
+
+#if 0
+public:
+	using ValueType = T;
+	using Iterator = LinkedListIterator<LinkedList<T>>;
+#endif
+
 public:
 	LinkedList();
 	~LinkedList();
 
-public:
 	LinkedList(const LinkedList<T>& other);
 	LinkedList<T>& operator=(const LinkedList<T>& other);
 
@@ -22,14 +75,25 @@ public:
 	T getValue();
 	T& getValueByRef();
 	const T& getValue() const;
+	Node<T>* getHead();
 	Node<T>* getCurrentNode();
-	Node<T>* searchValue(const T& value);
+	Node<T>* getTail();
 	bool hasNext();
 	void next();
 	void reset();
 
+	Node<T>* linearSearch(const T& value);
+	Node<T>* binarySearch(const T& value);
+
 	// Print
 	void display();
+
+#if 0
+public:
+	// Iterator Implementation
+	Iterator begin() { return Iterator(head); }
+	Iterator end() { return Iterator(tail->next); }
+#endif
 
 private:
 	Node<T>* head;

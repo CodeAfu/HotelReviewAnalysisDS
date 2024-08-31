@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "review.h"
 
@@ -15,13 +16,18 @@ bool Review::operator==(const Review& other) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Review& review) {
-	if (review.comment.length() > 10) {
-		os << "Comment: " << review.comment.substr(0, 10) << "..., ";
+	const int LIMIT = 50;
+	if (review.comment.length() > LIMIT) {
+		os << "Comment: " << review.comment.substr(0, LIMIT) << "..., ";
 	} else {
 		os << "Comment: " << review.comment << ", ";
 	}
 	os << "Rating: " << review.rating;
 	return os;
+}
+
+std::string& Review::operator*() const {
+	return const_cast<std::string&>(comment);
 }
 
 std::string Review::parseComment(std::string& reviewStr) {
@@ -31,7 +37,7 @@ std::string Review::parseComment(std::string& reviewStr) {
 		throw std::runtime_error("Comma not found in the entry [Review.parseComment].");
 	}
 
-	return reviewStr.substr(0, lastComma);
+	return reviewStr.substr(1, lastComma - 1);
 }
 
 unsigned int Review::parseRating(std::string& reviewStr) {

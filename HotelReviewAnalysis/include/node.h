@@ -6,6 +6,6 @@ struct Node {
 	Node* next;
 
 	Node() { }
-	Node(T& val, Node* nxt) : value(val), next(nxt) { }
 	Node(T& val) : value(val), next(nullptr) { }
+	Node(T& val, Node* nxt) : value(val), next(nxt) { }
 };

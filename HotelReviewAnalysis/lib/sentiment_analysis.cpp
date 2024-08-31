@@ -53,16 +53,20 @@ struct Result {
 
 namespace analyzer {
 	Result analyze(const Data& data);
-	Review buildReview(const Review& review);
 	void buildResult(const std::string& word, const Data& data, Result& res);
 	void processWord(std::string& word);
 
 	void run() {
-		LinkedList<Review> reviews = csvreader::asLLReview(REVIEWS_FILE); // NEEDS TO BE FIXED
+		LinkedList<Review> reviews = csvreader::asLLReview(REVIEWS_FILE);
 		LinkedList<std::string> positiveWords = csvreader::asLLString(POSITIVE_WORDS_FILE);
 		LinkedList<std::string> negativeWords = csvreader::asLLString(NEGATIVE_WORDS_FILE);
 
-		// Pause and Clear console
+		/// Debug
+		//reviews.display();
+		//positiveWords.display();
+		//negativeWords.display();
+
+		/// Pause and Clear console
 		//std::cin.get();
 		std::system("cls");
 
@@ -75,25 +79,28 @@ namespace analyzer {
 
 	Result analyze(const Data& data) {
 		const auto start = Timer::now();
-		const int DEBUG_LIMIT = 20; // set to -1 for real use
+		const int DEBUG_LIMIT = 100; // set to -1 for real use
 		int iterations = 0;
 
 		// Process Reviews
 		Result res;
 		while (data.reviews.getCurrentNode()) {
-			std::cin.get();
 			std::system("cls");
 
-			std::cout << "Review: " << data.reviews.getCurrentNode()->value.comment << std::endl;
-			std::cout << "Rating: " << data.reviews.getCurrentNode()->value.rating << std::endl;
+			std::cout << "Review: " << data.reviews.getValue().comment << std::endl;
+			std::cout << "Rating: " << data.reviews.getValue().rating << std::endl;
+			std::cin.get();
 
 			// Split String and build review
-			std::istringstream iss(data.reviews.getCurrentNode()->value.comment);
+			std::istringstream iss(data.reviews.getValue().comment);
 			std::string s;
+
+			// Get each word in comment
 			while (std::getline(iss, s, ' ')) {
 				processWord(s);
 				buildResult(s, data, res);
 			}
+
 			res.numReviews++;
 			std::cout << std::endl;
 			data.reviews.next();
@@ -103,6 +110,9 @@ namespace analyzer {
 			if (iterations == DEBUG_LIMIT) {
 				break;
 			}
+
+			/// Pause execution
+			//std::cin.get();
 		}
 
 		// Calculate Time
@@ -110,32 +120,7 @@ namespace analyzer {
 		return res;
 	}
 
-#if 0;
-	Review buildReview(const Review& review) {
-		size_t lastComma = review.comment.rfind(',');
-
-		std::string comment;
-		int rating;
-
-		if (lastComma != std::string::npos) {
-			comment = review.comment.substr(0, lastComma);
-			std::string strRating = review.comment.substr(lastComma + 1);
-
-			// Trim
-			strRating.erase(0, strRating.find_first_not_of(" \t\n\r\f\v"));
-			strRating.erase(strRating.find_last_not_of(" \t\n\r\f\v") + 1);
-
-			rating = std::stoi(strRating);
-		} else {
-			throw std::runtime_error("Comma not found in the entry [buildReview]");
-		}
-
-		return Review(comment, rating);
-	}
-#endif
-
 	void buildResult(const std::string& word, const Data& data, Result& res) {
-
 		// Calc Positive
 		while (data.positiveWords.getCurrentNode()) {
 

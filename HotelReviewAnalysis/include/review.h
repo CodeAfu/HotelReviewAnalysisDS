@@ -9,6 +9,7 @@ struct Review {
 	Review(std::string& reviewStr);
 
 	bool operator==(const Review& other) const;
+	std::string& operator*() const;
 	friend std::ostream& operator<<(std::ostream& os, const Review& review);
 
 private: 

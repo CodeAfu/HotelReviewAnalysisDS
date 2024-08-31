@@ -52,7 +52,6 @@ void LinkedList<T>::insertAtEnd(const T& val) {
 	Node<T>* n = new Node<T>();
 	n->value = val;
 	n->next = nullptr;
-	tail = n;
 
 	if (!head) {
 		head = n;
@@ -89,6 +88,13 @@ const T& LinkedList<T>::getValue() const {
 	return current->value;
 }
 
+template<typename T>
+Node<T>* LinkedList<T>::getHead() {
+	if (!head) {
+		throw std::runtime_error("Head node is null.");
+	}
+	return head;
+}
 
 template<typename T>
 Node<T>* LinkedList<T>::getCurrentNode() {
@@ -99,24 +105,12 @@ Node<T>* LinkedList<T>::getCurrentNode() {
 }
 
 template<typename T>
-Node<T>* LinkedList<T>::searchValue(const T& value) {
-	/// Test
-	//Node<T>* n = current;
-	//if (current != head) {
-	//	std::cout << "[LOG] Linked List current pointer needs to be reset.\n";
-	//	std::cout << "[WARNING] Returning Null Pointer.\n";
-	//	return nullptr;
-	//}
-	Node<T>* n = head;
-	while (n) {
-		if (n->value == value) {
-			return n;
-		}
-		n = n->next;
+Node<T>* LinkedList<T>::getTail() {
+	if (!tail) {
+		throw std::runtime_error("Tail node is null");
 	}
-	return nullptr;
+	return tail;
 }
-
 
 template<typename T>
 bool LinkedList<T>::hasNext() {
@@ -134,11 +128,28 @@ void LinkedList<T>::next() {
 
 template<typename T>
 void LinkedList<T>::reset() {
-	if (!current) {
+	if (!current && !head && !tail) {
 		throw std::runtime_error("Current Node is null.");
 	}
 	current = head;
 }
+
+template<typename T>
+Node<T>* LinkedList<T>::linearSearch(const T& value) {
+	Node<T>* n = head;
+	while (n) {
+		if (n->value == value) {
+			return n;
+		}
+		n = n->next;
+	}
+	return nullptr;
+}
+
+//template<typename T>
+//Node<T>* LinkedList<T>::binarySearch(const T& value) {
+//
+//}
 
 template<typename T>
 void LinkedList<T>::display() {
