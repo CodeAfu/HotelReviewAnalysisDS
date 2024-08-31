@@ -135,21 +135,42 @@ void LinkedList<T>::reset() {
 }
 
 template<typename T>
-Node<T>* LinkedList<T>::linearSearch(const T& value) {
+T* LinkedList<T>::linearSearch(const T& value) {
 	Node<T>* n = head;
 	while (n) {
 		if (n->value == value) {
-			return n;
+			return &(n->value);
 		}
 		n = n->next;
 	}
 	return nullptr;
 }
 
-//template<typename T>
-//Node<T>* LinkedList<T>::binarySearch(const T& value) {
-//
-//}
+template<typename T>
+T* LinkedList<T>::binarySearch(const T& value) {
+	Node<T>* start = head;
+	Node<T>* end = nullptr;
+
+	while (start != end) {
+		Node<T>* mid = start;
+		Node<T>* fast = start->next;
+
+		while (fast != end && fast->next != end) {
+			mid = mid->next;
+			fast = fast->next->next;
+		}
+
+		if (mid->value == value) {
+			return &(mid->value);
+		}
+		else if (mid->value < value) {
+			start = mid->next;
+		} else {
+			end = mid;
+		}
+	}
+	return nullptr;
+}
 
 template<typename T>
 void LinkedList<T>::display() {

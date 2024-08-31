@@ -4,13 +4,15 @@
 #include "csv_reader.h"
 #include "sentiment_analysis.h"
 
+#define LOG(x) std::cout << x << std::endl;
+
 constexpr char NEGATIVE_WORDS_FILE[] = "data/negative-words.txt";
 constexpr char POSITIVE_WORDS_FILE[] = "data/positive-words.txt";
 constexpr char REVIEWS_FILE[] = "data/tripadvisor_hotel_reviews.csv";
 
 void clearMem(std::string* arr);
 
-int main() {
+int main(int argc, char** argv) {
 
 	/// As String
 	// const std::string allReviewsStr = csvreader::asString("data/tripadvisor_hotel_reviews.csv");
@@ -38,8 +40,25 @@ int main() {
 	//clearMem(positiveWordsArr);
 	//clearMem(allReviewsArr);
 
-	analyzer::run();
+	std::string revFile;
+	std::string posFile;
+	std::string negFile;
 
+	switch (argc) {
+		case 1:
+			analyzer::run(REVIEWS_FILE, POSITIVE_WORDS_FILE, NEGATIVE_WORDS_FILE);
+			break;
+		case 4:
+			revFile = argv[1];
+			posFile = argv[2];
+			negFile = argv[3];
+			analyzer::run(revFile, posFile, negFile);
+			break;
+		default:
+			std::cerr << "Usage: " << argv[0] << " [reviews_file] [positive_words_file] [negative_words_file]" << std::endl;
+			return 1;
+	}
+	
 	return 0;
 }
 

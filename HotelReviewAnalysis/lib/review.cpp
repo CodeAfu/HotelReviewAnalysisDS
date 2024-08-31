@@ -15,6 +15,10 @@ bool Review::operator==(const Review& other) const {
 	return comment == other.comment && rating == other.rating;
 }
 
+bool Review::operator<(const Review& other) const {
+	return this->comment < other.comment;
+}
+
 std::ostream& operator<<(std::ostream& os, const Review& review) {
 	const int LIMIT = 50;
 	if (review.comment.length() > LIMIT) {

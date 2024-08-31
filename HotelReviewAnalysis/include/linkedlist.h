@@ -47,7 +47,6 @@ public:
 private:
 	PointerType m_Ptr;
 };
-
 #endif
 
 template<typename T>
@@ -82,8 +81,8 @@ public:
 	void next();
 	void reset();
 
-	Node<T>* linearSearch(const T& value);
-	Node<T>* binarySearch(const T& value);
+	T* linearSearch(const T& value);
+	T* binarySearch(const T& value);
 
 	// Print
 	void display();
