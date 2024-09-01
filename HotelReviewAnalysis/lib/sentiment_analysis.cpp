@@ -9,12 +9,14 @@
 #include "review.h"
 #include "linkedlist.h"
 #include "csv_reader.h"
+#include "review_stats.h"
 #include "sentiment_analysis.h"
 
 #define LOG(x) std::cout << x << std::endl
 
 using Ms = std::chrono::milliseconds;
 using Timer = std::chrono::high_resolution_clock;
+
 
 struct Data {
 	LinkedList<Review>& reviews;
@@ -27,131 +29,161 @@ struct Data {
 
 
 struct Result {
-	LinkedList<std::string> pos;
-	LinkedList<std::string> neg;
+	LinkedList<ReviewStats> reviewStats;
+	LinkedList<std::string> wordsPos;
+	LinkedList<std::string> wordsNeg;
 	unsigned int numReviews = 0;
 	unsigned int numWords = 0;
 	unsigned int numPos = 0;
 	unsigned int numNeg = 0;
 	Ms duration;
 
-	void summary() {
+	void log() {
 		std::cout << std::format("Number of Reviews: {}\n", numReviews);
 		std::cout << std::format("Number of Words: {}\n", numWords);
 		std::cout << std::format("Number of Positives: {}\n", numPos);
 		std::cout << std::format("Number of Negatives: {}\n", numNeg);
 		std::cout << std::format("Time elapsed: {}\n", duration);
 	}
+
+	Result& operator+=(const ReviewStats& rhs) {
+		this->reviewStats.insertAtEnd(rhs);
+		if (rhs.wordsPos.getHead() != nullptr) {
+			this->wordsPos += rhs.wordsPos;
+		}
+		if (rhs.wordsNeg.getHead() != nullptr) {
+			this->wordsNeg += rhs.wordsNeg;
+		}
+		this->numPos += rhs.numPos;
+		this->numNeg += rhs.numNeg;
+		this->numWords += rhs.numWords;
+		
+		return *this;
+	}
 };
 
 
-namespace analyzer {
+namespace LinkedListImpl {
 	Result analyze(const Data& data);
-	void buildResultBinary(const std::string& word, const Data& data, Result& res);
+	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
 	void buildResultLinear(const std::string& word, const Data& data, Result& res);
 	void processWord(std::string& word);
 
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile) {
+
+		/// Load File Data
 		LinkedList<Review> reviews = csvreader::asLLReview(revFile);
 		LinkedList<std::string> positiveWords = csvreader::asLLString(posFile);
 		LinkedList<std::string> negativeWords = csvreader::asLLString(negFile);
-
-		/// Debug
-		//reviews.display();
-		//positiveWords.display();
-		//negativeWords.display();
+		Data data(reviews, positiveWords, negativeWords);
 
 		//std::cin.get();
 		std::system("cls");
-
-		Data data(reviews, positiveWords, negativeWords);
+		
+		/// Main Analysis runs here
 		Result res = analyze(data);
+		
 		std::system("cls");
+		res.log();
 
-		res.summary();
+		//res.reviewStats.next();
+		//res.reviewStats.getHead()->value.log();
 	}
 
 	Result analyze(const Data& data) {
 		const int DEBUG_LIMIT = -1; // set to -1 for real use
 		int iterations = 0;
-
+		
 		const auto start = Timer::now();
 
-		// Process Reviews
+		/// Process Reviews
 		Result res;
-		while (data.reviews.getCurrentNode()) {
-			std::system("cls");
+		while (true) {
+			ReviewStats stats;
+			
+			//std::system("cls");
+			std::cout << "\rReview #" << iterations + 1 << std::flush;
 
-			std::cout << "Review: " << data.reviews.getValue().comment << std::endl;
-			std::cout << "Rating: " << data.reviews.getValue().rating << std::endl;
+			//std::cout << "Review: " << data.reviews.getValue().comment << std::endl;
+			//std::cout << "Rating: " << data.reviews.getValue().rating << std::endl;
 			//std::cin.get();
 
-			// Split String and build review
+			/// Split string and build review
 			std::istringstream iss(data.reviews.getValue().comment);
 			std::string s;
 
-			// Get each word in comment
+			/// Get each word in comment
 			while (std::getline(iss, s, ' ')) {
 				processWord(s);
 				//buildResultLinear(s, data, res);
-				buildResultBinary(s, data, res);
+				buildResultBinary(s, data, res, stats);
 			}
-
+			
+			/// Append stats to result
+			res += stats; 
 			res.numReviews++;
-			std::cout << std::endl;
-			data.reviews.next();
 
-			// Limit Iterations for Debug
+			/// Limit iterations for debug
 			iterations++;
 			if (iterations == DEBUG_LIMIT) {
 				break;
 			}
-
-			if (data.reviews.getCurrentNode() == nullptr) {
+			
+			//std::cin.get();
+			
+			/// Break Loop
+			if (!data.reviews.hasNext()) {
 				break;
 			}
-
-			//std::cin.get();
+			data.reviews.next();
 		}
 
 		res.duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
 		return res;
 	}
 	
-	void buildResultBinary(const std::string& word, const Data& data, Result& res) {
+	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
+		stats.review = data.reviews.getValue();
+
 		// Calc Positive
-		const std::string* pcPtr = data.positiveWords.binarySearch(word);
+		const std::string* pwPtr = data.positiveWords.binarySearch(word);
+		if (pwPtr != nullptr) {
+			stats.wordsPos.insertAtEnd(*pwPtr);
+			stats.numPos++;
+			stats.numWords++;
 
-		if (pcPtr != nullptr) {
-			res.pos.insertAtEnd(*pcPtr);
-			res.numPos++;
-			std::cout << *pcPtr << "+";
+			//res.wordsPos.insertAtEnd(*pcPtr);
+			//res.numPos++;
+			//res.numWords++;
 
-			// return early if positive word found
-			//return;
+			//std::cout << *pwPtr << "+";
+
+			return;
 		}
 
 		// Calc Negative
-		const std::string* ncPtr = data.negativeWords.binarySearch(word);
-		if (ncPtr != nullptr) {
-			res.neg.insertAtEnd(*ncPtr);
-			res.numNeg++;
-			std::cout << *ncPtr << "-";
-			
-			// return early if positive word found
-			//return;
+		const std::string* nwPtr = data.negativeWords.binarySearch(word);
+		if (nwPtr != nullptr) {
+			stats.wordsNeg.insertAtEnd(*nwPtr);
+			stats.numNeg++;
+			stats.numWords++;
+
+			//res.wordsNeg.insertAtEnd(*ncPtr);
+			//res.numNeg++;
+			//res.numWords++;
+
+			//std::cout << *nwPtr << "-";
 		}
-		res.numWords++;
 	}
 
 	void buildResultLinear(const std::string& word, const Data& data, Result& res) {
-		// Calc Positive
+		/// Calc Positive
 		while (data.positiveWords.getCurrentNode()) {
 
 			const std::string& s = data.positiveWords.getValue();
 
 			if (s == word) {
-				res.pos.insertAtEnd(word);
+				res.wordsPos.insertAtEnd(word);
 				res.numPos++;
 				std::cout << s << "+";
 				//break;
@@ -163,13 +195,13 @@ namespace analyzer {
 			data.positiveWords.next();
 		}
 
-		// Calc Negative
+		/// Calc Negative
 		while (data.negativeWords.getCurrentNode()) {
 
 			const std::string& s = data.negativeWords.getValue();
 
 			if (s == word) {
-				res.neg.insertAtEnd(word);
+				res.wordsNeg.insertAtEnd(word);
 				res.numNeg++;
 				std::cout << s << "-";
 				//break;

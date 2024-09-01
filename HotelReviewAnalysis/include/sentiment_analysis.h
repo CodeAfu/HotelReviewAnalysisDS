@@ -1,5 +1,5 @@
 #pragma once
 
-namespace analyzer {
+namespace LinkedListImpl {
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile);
 }

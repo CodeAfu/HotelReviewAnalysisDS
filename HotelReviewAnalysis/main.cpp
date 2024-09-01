@@ -46,13 +46,13 @@ int main(int argc, char** argv) {
 
 	switch (argc) {
 		case 1:
-			analyzer::run(REVIEWS_FILE, POSITIVE_WORDS_FILE, NEGATIVE_WORDS_FILE);
+			LinkedListImpl::run(REVIEWS_FILE, POSITIVE_WORDS_FILE, NEGATIVE_WORDS_FILE);
 			break;
 		case 4:
 			revFile = argv[1];
 			posFile = argv[2];
 			negFile = argv[3];
-			analyzer::run(revFile, posFile, negFile);
+			LinkedListImpl::run(revFile, posFile, negFile);
 			break;
 		default:
 			std::cerr << "Usage: " << argv[0] << " [reviews_file] [positive_words_file] [negative_words_file]" << std::endl;

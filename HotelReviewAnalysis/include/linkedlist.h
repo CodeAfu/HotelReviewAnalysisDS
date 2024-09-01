@@ -1,7 +1,7 @@
 #pragma once
 
 #include "node.h"
-#include "review.h"
+//#include "review.h"
 
 #if 0
 template<typename T>
@@ -64,6 +64,7 @@ public:
 
 	LinkedList(const LinkedList<T>& other);
 	LinkedList<T>& operator=(const LinkedList<T>& other);
+	LinkedList<T>& operator+=(const LinkedList<T>& other);
 
 public:
 	// Build Linked List
@@ -74,9 +75,9 @@ public:
 	T getValue();
 	T& getValueByRef();
 	const T& getValue() const;
-	Node<T>* getHead();
+	Node<T>* getHead() const;
 	Node<T>* getCurrentNode();
-	Node<T>* getTail();
+	Node<T>* getTail() const;
 	bool hasNext();
 	void next();
 	void reset();
@@ -102,5 +103,5 @@ private:
 	void copyFrom(const LinkedList<T>& other);
 };
 
-extern template class LinkedList<Review>;
-extern template class LinkedList<std::string>;
+//extern template class LinkedList<Review>;
+//extern template class LinkedList<std::string>;

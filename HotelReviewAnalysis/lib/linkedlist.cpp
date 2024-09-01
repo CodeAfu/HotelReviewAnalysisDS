@@ -1,5 +1,7 @@
 #include <iostream>
 #include "linkedlist.h";
+#include "review.h";
+#include "review_stats.h"
 
 template<typename T>
 LinkedList<T>::LinkedList() : head(nullptr), current(nullptr), tail(nullptr) { }
@@ -32,6 +34,21 @@ LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
 		}
 	}
 	return *this;
+}
+
+
+template<typename T>
+LinkedList<T>& LinkedList<T>::operator+=(const LinkedList<T>& other) {
+	if (other.head == nullptr) {
+		return *this;
+	}
+
+	Node<T>* otherNode = other.head;
+
+	while (otherNode != nullptr) {
+		this->insertAtEnd(otherNode->value);
+		otherNode = otherNode->next;
+	}
 }
 
 template<typename T>
@@ -89,10 +106,10 @@ const T& LinkedList<T>::getValue() const {
 }
 
 template<typename T>
-Node<T>* LinkedList<T>::getHead() {
-	if (!head) {
-		throw std::runtime_error("Head node is null.");
-	}
+Node<T>* LinkedList<T>::getHead() const {
+	//if (!head) {
+	//	throw std::runtime_error("Head node is null.");
+	//}
 	return head;
 }
 
@@ -105,7 +122,7 @@ Node<T>* LinkedList<T>::getCurrentNode() {
 }
 
 template<typename T>
-Node<T>* LinkedList<T>::getTail() {
+Node<T>* LinkedList<T>::getTail() const {
 	if (!tail) {
 		throw std::runtime_error("Tail node is null");
 	}
@@ -198,4 +215,5 @@ void LinkedList<T>::copyFrom(const LinkedList<T>& other) {
 }
 
 template class LinkedList<Review>;
+template class LinkedList<ReviewStats>;
 template class LinkedList<std::string>;

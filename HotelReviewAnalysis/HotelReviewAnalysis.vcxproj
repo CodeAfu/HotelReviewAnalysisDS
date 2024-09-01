@@ -22,6 +22,7 @@
     <ClCompile Include="lib\csv_reader.cpp" />
     <ClCompile Include="lib\linkedlist.cpp" />
     <ClCompile Include="lib\review.cpp" />
+    <ClCompile Include="lib\review_stats.cpp" />
     <ClCompile Include="lib\sentiment_analysis.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -30,6 +31,7 @@
     <ClInclude Include="include\linkedlist.h" />
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\review.h" />
+    <ClInclude Include="include\review_stats.h" />
     <ClInclude Include="include\sentiment_analysis.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
