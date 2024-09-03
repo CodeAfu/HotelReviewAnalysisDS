@@ -9,7 +9,7 @@ void Result::log() {
 	std::cout << "Number of Words: " << numWords << std::endl;
 	std::cout << "Number of Positives: " << numPos << std::endl;
 	std::cout << "Number of Negatives: " << numNeg << std::endl;
-	std::cout << "Time elapsed: {}" << duration << std::endl;
+	std::cout << "Time elapsed: " << duration << std::endl;
 }
 
 Result& Result::operator+=(const ReviewStats rhs) {
