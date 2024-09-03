@@ -50,6 +50,8 @@ LinkedList<T>& LinkedList<T>::operator+=(const LinkedList<T>& other) {
 		this->insertAtEnd(otherNode->value);
 		otherNode = otherNode->next;
 	}
+
+	return *this;
 }
 
 template<typename T>
@@ -83,6 +85,36 @@ void LinkedList<T>::insertAtEnd(const T& val) {
 }
 
 template<typename T>
+void LinkedList<T>::insertSorted(const T& val) {
+	Node<T>* n = new Node<T>();
+	n->value = val;
+	n->next = nullptr;
+
+	// Handle Uninitialized and val > head
+	if (!head || val < head->value) {
+		n->next = head;
+		head = n;
+		if (!tail) {
+			tail = n;
+		}
+		return;
+	}
+
+	// Handle in-between
+	Node<T>* curr = head;
+	while (curr->next && curr->next->value < val) {
+		curr = curr->next;
+	}
+
+	n->next = curr->next;
+	curr->next = n;
+
+	if (!n->next) {
+		tail = n;
+	}
+}
+
+template<typename T>
 T LinkedList<T>::getValue() {
 	if (!current) {
 		throw std::runtime_error("Current Node is null.");
@@ -109,7 +141,7 @@ const T& LinkedList<T>::getValue() const {
 template<typename T>
 Node<T>* LinkedList<T>::getHead() const {
 	//if (!head) {
-	//	throw std::runtime_error("Head node is null.");
+	//	std::cerr << "Head node is null.\n";
 	//}
 	return head;
 }
@@ -124,9 +156,9 @@ Node<T>* LinkedList<T>::getCurrentNode() {
 
 template<typename T>
 Node<T>* LinkedList<T>::getTail() const {
-	if (!tail) {
-		throw std::runtime_error("Tail node is null");
-	}
+	//if (!tail) {
+	//	std::cerr << "Tail node is null.\n";
+	//}
 	return tail;
 }
 

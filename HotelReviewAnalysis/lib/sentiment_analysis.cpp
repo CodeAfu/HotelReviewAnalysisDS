@@ -32,8 +32,8 @@ struct Data {
 
 struct Result {
 	LinkedList<ReviewStats> reviewStats;
-	LinkedList<std::string> wordsPos;
-	LinkedList<std::string> wordsNeg;
+	LinkedList<Word> wordsPos;
+	LinkedList<Word> wordsNeg;
 	unsigned int numReviews = 0;
 	unsigned int numWords = 0;
 	unsigned int numPos = 0;
@@ -50,12 +50,40 @@ struct Result {
 
 	Result& operator+=(const ReviewStats& rhs) {
 		this->reviewStats.insertAtEnd(rhs);
-		if (rhs.wordsPos.getHead() != nullptr) {
-			this->wordsPos += rhs.wordsPos;
+
+		//if (rhs.wordsPos.getHead() != nullptr) {
+		//	this->wordsPos += rhs.wordsPos;
+		//}
+		//if (rhs.wordsNeg.getHead() != nullptr) {
+		//	this->wordsNeg += rhs.wordsNeg;
+		//}
+
+		// Merge wordsPos
+		Node<Word>* rhsPosNode = rhs.wordsPos.getHead();
+		while (rhsPosNode) {
+			Word rhsWord = rhsPosNode->value;
+			Word* word = this->wordsPos.binarySearch(rhsWord);
+			if (word) {
+				word->count += 1;
+			} else {
+				this->wordsPos.insertSorted(rhsWord);
+			}
+			rhsPosNode = rhsPosNode->next;
 		}
-		if (rhs.wordsNeg.getHead() != nullptr) {
-			this->wordsNeg += rhs.wordsNeg;
+
+		// Merge wordsNeg
+		Node<Word>* rhsNegNode = rhs.wordsNeg.getHead();
+		while (rhsNegNode) {
+			Word rhsWord = rhsNegNode->value;
+			Word* word = this->wordsNeg.binarySearch(rhsWord);
+			if (word) {
+				word->count += 1;
+			} else {
+				this->wordsNeg.insertSorted(rhsWord);
+			}
+			rhsNegNode = rhsNegNode->next;
 		}
+
 		this->numPos += rhs.numPos;
 		this->numNeg += rhs.numNeg;
 		this->numWords += rhs.numWords;
@@ -69,7 +97,7 @@ namespace LinkedListImpl {
 	Result analyze(const Data& data);
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
 	void buildResultLinear(const std::string& word, const Data& data, Result& res);
-	void statsProcessor(ReviewStats& stats, Result& res);
+	//void statsProcessor(ReviewStats& stats, Result& res);
 	void processWord(std::string& word);
 
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile) {
@@ -89,8 +117,8 @@ namespace LinkedListImpl {
 		std::system("cls");
 		res.log();
 
-		//res.reviewStats.next();
-		//res.reviewStats.getHead()->value.log();
+		res.wordsPos.display();
+		//res.reviewStats.getHead()->next->next->value.wordsPos.display();
 	}
 
 	Result analyze(const Data& data) {
@@ -103,7 +131,6 @@ namespace LinkedListImpl {
 		Result res;
 		while (true) {
 			ReviewStats stats;
-
 			//std::system("cls");
 			std::cout << "\rReview #" << iterations + 1 << std::flush;
 
@@ -123,7 +150,7 @@ namespace LinkedListImpl {
 			}
 			
 			/// Append stats to result
-			res += stats; 
+			res += stats;
 			res.numReviews++;
 
 			/// Limit iterations for debug
@@ -150,37 +177,50 @@ namespace LinkedListImpl {
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
 		stats.review = data.reviews.getValue();
 
-		// Calculate Positive
+		/// Calculate Positive
+		// if check for 'Data' struct: builds final result
 		const std::string* pwPtr = data.positiveWords.binarySearch(word);
 		if (pwPtr != nullptr) {
-			stats.wordsPos.insertAtEnd(*pwPtr);
+			Word posWordStruct(*pwPtr);
+			// if check for 'ReviewStats' struct: builds individual review stats
+			Word* statsWordPtr = stats.wordsPos.binarySearch(posWordStruct);
+			if (statsWordPtr == nullptr) {
+				posWordStruct.count = posWordStruct.count + 1;
+				stats.wordsPos.insertSorted(posWordStruct);
+			}
+			else {
+				statsWordPtr->count = statsWordPtr->count + 1;
+			}
+
+			//std::cout << word << "+";
+
 			stats.numPos++;
 			stats.numWords++;
-
-			//res.wordsPos.insertAtEnd(*pcPtr);
-			//res.numPos++;
-			//res.numWords++;
-
-			//std::cout << *pwPtr << "+";
-
 			return;
 		}
 
-		// Calculate Negative
+		/// Calculate Negative
+		// if check for 'Data' struct: builds final result
 		const std::string* nwPtr = data.negativeWords.binarySearch(word);
 		if (nwPtr != nullptr) {
-			stats.wordsNeg.insertAtEnd(*nwPtr);
+			Word negWordStruct(*nwPtr);
+			// if check for 'ReviewStats' struct: builds individual review stats
+			Word* statsWordPtr = stats.wordsNeg.binarySearch(negWordStruct);
+			if (statsWordPtr == nullptr) {
+				negWordStruct.count = negWordStruct.count + 1;
+				stats.wordsNeg.insertSorted(negWordStruct);
+			} else {
+				statsWordPtr->count = statsWordPtr->count + 1;
+			}
+
+			//std::cout << word << "-";
+
 			stats.numNeg++;
 			stats.numWords++;
-
-			//res.wordsNeg.insertAtEnd(*ncPtr);
-			//res.numNeg++;
-			//res.numWords++;
-
-			//std::cout << *nwPtr << "-";
 		}
 	}
 
+#if 0
 	void buildResultLinear(const std::string& word, const Data& data, Result& res) {
 		/// Calc Positive
 		while (data.positiveWords.getCurrentNode()) {
@@ -188,6 +228,7 @@ namespace LinkedListImpl {
 			const std::string& s = data.positiveWords.getValue();
 
 			if (s == word) {
+				Word word();
 				res.wordsPos.insertAtEnd(word);
 				res.numPos++;
 				std::cout << s << "+";
@@ -228,6 +269,7 @@ namespace LinkedListImpl {
 	void statsProcessor(ReviewStats& stats, Word& wc, Result& res) {
 
 	}
+#endif
 
 	void processWord(std::string& word) {
 		const char excludeChars[] = { ',', '\"', '\'', '.', '/', ':', ';', '!', '?' };

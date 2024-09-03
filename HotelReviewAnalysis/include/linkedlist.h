@@ -70,6 +70,7 @@ public:
 	// Build Linked List
 	void insertAtBeginning(const T& value);
 	void insertAtEnd(const T& value);
+	void insertSorted(const T& value);
 
 	// Query and Controls
 	T getValue();
@@ -102,6 +103,3 @@ private:
 
 	void copyFrom(const LinkedList<T>& other);
 };
-
-//extern template class LinkedList<Review>;
-//extern template class LinkedList<std::string>;

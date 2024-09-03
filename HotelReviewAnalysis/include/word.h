@@ -2,24 +2,33 @@
 
 struct Word {
 	std::string word;
-	unsigned int count;
+	unsigned int count = 0;
+
+	Word() { }
+	Word(std::string word) : word(word) { }
+	Word(std::string word, unsigned int count) : word(word), count(count) { }
 
 	// Operator Overloads
 	bool operator==(const Word& other) const {
-		return word == other.word && count == other.count;
+		return word == other.word;
+	}
+
+	bool operator==(const std::string& other) const {
+		return word == other;
 	}
 
 	Word& operator+=(const Word& rhs) {
-		word += rhs.word;
-		count += rhs.count;
+		this->word += rhs.word;
+		this->count += rhs.count;
+		return *this;
 	}
 
 	bool operator<(const Word& other) const {
-		return this->count < other.count;
+		return this->word < other.word;
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Word& wordCount) {
-		os << wordCount.word;
+		os << wordCount.word << ":" << wordCount.count;
 		return os;
 	}
 };
