@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include "word.h"
 #include "review.h"
 
@@ -10,6 +11,7 @@ struct ReviewStats {
 	unsigned int numPos = 0;
 	unsigned int numNeg = 0;
 	unsigned int numWords = 0;
+	std::chrono::microseconds timeInMillis;
 
 	/// TODO: Add Semantic Analysis Data Here
 	

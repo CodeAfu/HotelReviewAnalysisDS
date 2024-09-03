@@ -17,6 +17,7 @@
 #define LOG(x) std::cout << x << std::endl
 
 using Ms = std::chrono::milliseconds;
+using Mu = std::chrono::microseconds;
 using Timer = std::chrono::high_resolution_clock;
 
 
@@ -50,13 +51,6 @@ struct Result {
 
 	Result& operator+=(const ReviewStats& rhs) {
 		this->reviewStats.insertAtEnd(rhs);
-
-		//if (rhs.wordsPos.getHead() != nullptr) {
-		//	this->wordsPos += rhs.wordsPos;
-		//}
-		//if (rhs.wordsNeg.getHead() != nullptr) {
-		//	this->wordsNeg += rhs.wordsNeg;
-		//}
 
 		// Merge wordsPos
 		Node<Word>* rhsPosNode = rhs.wordsPos.getHead();
@@ -131,6 +125,8 @@ namespace LinkedListImpl {
 		/// Process Reviews
 		Result res;
 		while (true) {
+			const auto reviewTimer = Timer::now();
+
 			ReviewStats stats;
 			//std::system("cls");
 			std::cout << "\rReview #" << iterations + 1 << std::flush;
@@ -160,8 +156,6 @@ namespace LinkedListImpl {
 				break;
 			}
 
-			//std::jthread t1(statsProcessor, stats, res);
-			
 			//std::cin.get();
 			
 			/// Break Loop
@@ -169,6 +163,8 @@ namespace LinkedListImpl {
 				break;
 			}
 			data.reviews.next();
+
+			stats.timeInMillis = std::chrono::duration_cast<Mu>(Timer::now() - start);
 		}
 
 		res.duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
@@ -220,6 +216,18 @@ namespace LinkedListImpl {
 		}
 	}
 
+	void processWord(std::string& word) {
+		const char excludeChars[] = { ',', '\"', '\'', '.', '/', ':', ';', '!', '?' };
+		const size_t n = sizeof(excludeChars) / sizeof(char);
+
+		std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+
+		word.erase(std::remove_if(word.begin(), word.end(), [&](char c) {
+			return std::find(excludeChars, excludeChars + n, c) != excludeChars + n;
+			}), word.end());
+	}
+
+/// This block need refactoring
 #if 0
 	void buildResultLinear(const std::string& word, const Data& data, Result& res) {
 		/// Calc Positive
@@ -265,21 +273,5 @@ namespace LinkedListImpl {
 
 		res.numWords++;
 	}
-
-	void statsProcessor(ReviewStats& stats, Word& wc, Result& res) {
-
-	}
 #endif
-
-	void processWord(std::string& word) {
-		const char excludeChars[] = { ',', '\"', '\'', '.', '/', ':', ';', '!', '?' };
-		const size_t n = sizeof(excludeChars) / sizeof(char);
-
-		std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-
-		word.erase(std::remove_if(word.begin(), word.end(), [&](char c) {
-			return std::find(excludeChars, excludeChars + n, c) != excludeChars + n;
-		}), word.end());
-	}
-
 }
