@@ -117,7 +117,8 @@ namespace LinkedListImpl {
 		std::system("cls");
 		res.log();
 
-		res.wordsPos.display();
+		//res.wordsPos.display();
+		//res.wordsNeg.display();
 		//res.reviewStats.getHead()->next->next->value.wordsPos.display();
 	}
 
@@ -176,6 +177,7 @@ namespace LinkedListImpl {
 	
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
 		stats.review = data.reviews.getValue();
+		stats.numWords++;
 
 		/// Calculate Positive
 		// if check for 'Data' struct: builds final result
@@ -195,7 +197,6 @@ namespace LinkedListImpl {
 			//std::cout << word << "+";
 
 			stats.numPos++;
-			stats.numWords++;
 			return;
 		}
 
@@ -216,7 +217,6 @@ namespace LinkedListImpl {
 			//std::cout << word << "-";
 
 			stats.numNeg++;
-			stats.numWords++;
 		}
 	}
 
