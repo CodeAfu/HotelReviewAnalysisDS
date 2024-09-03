@@ -33,6 +33,7 @@
     <ClInclude Include="include\review.h" />
     <ClInclude Include="include\review_stats.h" />
     <ClInclude Include="include\sentiment_analysis.h" />
+    <ClInclude Include="include\word.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

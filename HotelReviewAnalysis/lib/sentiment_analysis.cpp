@@ -5,11 +5,13 @@
 #include <format>
 #include <chrono>
 #include <ios>
+#include <thread>
 
 #include "review.h"
 #include "linkedlist.h"
 #include "csv_reader.h"
 #include "review_stats.h"
+#include "word.h"
 #include "sentiment_analysis.h"
 
 #define LOG(x) std::cout << x << std::endl
@@ -67,6 +69,7 @@ namespace LinkedListImpl {
 	Result analyze(const Data& data);
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
 	void buildResultLinear(const std::string& word, const Data& data, Result& res);
+	void statsProcessor(ReviewStats& stats, Result& res);
 	void processWord(std::string& word);
 
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile) {
@@ -100,7 +103,7 @@ namespace LinkedListImpl {
 		Result res;
 		while (true) {
 			ReviewStats stats;
-			
+
 			//std::system("cls");
 			std::cout << "\rReview #" << iterations + 1 << std::flush;
 
@@ -128,6 +131,8 @@ namespace LinkedListImpl {
 			if (iterations == DEBUG_LIMIT) {
 				break;
 			}
+
+			//std::jthread t1(statsProcessor, stats, res);
 			
 			//std::cin.get();
 			
@@ -145,7 +150,7 @@ namespace LinkedListImpl {
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
 		stats.review = data.reviews.getValue();
 
-		// Calc Positive
+		// Calculate Positive
 		const std::string* pwPtr = data.positiveWords.binarySearch(word);
 		if (pwPtr != nullptr) {
 			stats.wordsPos.insertAtEnd(*pwPtr);
@@ -161,7 +166,7 @@ namespace LinkedListImpl {
 			return;
 		}
 
-		// Calc Negative
+		// Calculate Negative
 		const std::string* nwPtr = data.negativeWords.binarySearch(word);
 		if (nwPtr != nullptr) {
 			stats.wordsNeg.insertAtEnd(*nwPtr);
@@ -220,6 +225,10 @@ namespace LinkedListImpl {
 		res.numWords++;
 	}
 
+	void statsProcessor(ReviewStats& stats, Word& wc, Result& res) {
+
+	}
+
 	void processWord(std::string& word) {
 		const char excludeChars[] = { ',', '\"', '\'', '.', '/', ':', ';', '!', '?' };
 		const size_t n = sizeof(excludeChars) / sizeof(char);
@@ -230,4 +239,5 @@ namespace LinkedListImpl {
 			return std::find(excludeChars, excludeChars + n, c) != excludeChars + n;
 		}), word.end());
 	}
+
 }

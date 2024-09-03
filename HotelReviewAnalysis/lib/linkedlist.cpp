@@ -2,6 +2,7 @@
 #include "linkedlist.h";
 #include "review.h";
 #include "review_stats.h"
+#include "word.h"
 
 template<typename T>
 LinkedList<T>::LinkedList() : head(nullptr), current(nullptr), tail(nullptr) { }
@@ -216,4 +217,5 @@ void LinkedList<T>::copyFrom(const LinkedList<T>& other) {
 
 template class LinkedList<Review>;
 template class LinkedList<ReviewStats>;
+template class LinkedList<Word>;
 template class LinkedList<std::string>;

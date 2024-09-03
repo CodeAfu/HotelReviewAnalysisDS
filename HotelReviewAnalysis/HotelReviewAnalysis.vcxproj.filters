@@ -30,6 +30,9 @@
     <ClCompile Include="lib\review.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\review_stats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\csv_reader.h">
@@ -45,6 +48,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\review.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\review_stats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\word.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
