@@ -12,6 +12,7 @@
 #include "csv_reader.h"
 #include "review_stats.h"
 #include "word.h"
+#include "result.h"
 #include "sentiment_analysis.h"
 
 #define LOG(x) std::cout << x << std::endl
@@ -30,9 +31,9 @@ struct Data {
 		: reviews(rev), positiveWords(pos), negativeWords(neg) { }
 };
 
-
+#if 0
 struct Result {
-	LinkedList<ReviewStats> reviewStats;
+	LinkedList<ReviewStats> reviewStats; // Information about each review, iterate through each to get details
 	LinkedList<Word> wordsPos;
 	LinkedList<Word> wordsNeg;
 	unsigned int numReviews = 0;
@@ -41,15 +42,9 @@ struct Result {
 	unsigned int numNeg = 0;
 	Ms duration;
 
-	void log() {
-		std::cout << std::format("Number of Reviews: {}\n", numReviews);
-		std::cout << std::format("Number of Words: {}\n", numWords);
-		std::cout << std::format("Number of Positives: {}\n", numPos);
-		std::cout << std::format("Number of Negatives: {}\n", numNeg);
-		std::cout << std::format("Time elapsed: {}\n", duration);
-	}
+	void log();
 
-	Result& operator+=(const ReviewStats& rhs) {
+	Result& operator+=(const ReviewStats rhs) {
 		this->reviewStats.insertAtEnd(rhs);
 
 		// Merge wordsPos
@@ -59,7 +54,8 @@ struct Result {
 			Word* word = this->wordsPos.binarySearch(rhsWord);
 			if (word) {
 				word->count += 1;
-			} else {
+			}
+			else {
 				this->wordsPos.insertSorted(rhsWord);
 			}
 			rhsPosNode = rhsPosNode->next;
@@ -72,7 +68,8 @@ struct Result {
 			Word* word = this->wordsNeg.binarySearch(rhsWord);
 			if (word) {
 				word->count += 1;
-			} else {
+			}
+			else {
 				this->wordsNeg.insertSorted(rhsWord);
 			}
 			rhsNegNode = rhsNegNode->next;
@@ -81,11 +78,11 @@ struct Result {
 		this->numPos += rhs.numPos;
 		this->numNeg += rhs.numNeg;
 		this->numWords += rhs.numWords;
-		
+
 		return *this;
 	}
 };
-
+#endif
 
 namespace LinkedListImpl {
 	Result analyze(const Data& data);
@@ -149,6 +146,9 @@ namespace LinkedListImpl {
 			/// Append stats to result
 			res += stats;
 			res.numReviews++;
+
+			/// Calculate Sentiment Score for each review
+			stats.calculateSentimentScore();
 
 			/// Limit iterations for debug
 			iterations++;
