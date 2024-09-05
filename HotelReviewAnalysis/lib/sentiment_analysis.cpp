@@ -90,6 +90,8 @@ namespace LinkedListImpl {
 	void buildResultLinear(const std::string& word, const Data& data, Result& res);
 	//void statsProcessor(ReviewStats& stats, Result& res);
 	void processWord(std::string& word);
+	void menuLoop(Result& res);
+	bool isNumber(const std::string& s);
 
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile) {
 
@@ -105,12 +107,12 @@ namespace LinkedListImpl {
 		/// Main Analysis runs here
 		Result res = analyze(data);
 		
+		/// Prints final result details
 		std::system("cls");
 		res.log();
 
-		//res.wordsPos.display();
-		//res.wordsNeg.display();
-		//res.reviewStats.getHead()->next->next->value.wordsPos.display();
+		/// Prompts
+		menuLoop(res);
 	}
 
 	Result analyze(const Data& data) {
@@ -225,6 +227,45 @@ namespace LinkedListImpl {
 		word.erase(std::remove_if(word.begin(), word.end(), [&](char c) {
 			return std::find(excludeChars, excludeChars + n, c) != excludeChars + n;
 			}), word.end());
+	}
+
+	void menuLoop(Result& res) {
+		const std::string menus[] = {
+			"1 - Positive Reviews",
+			"2 - Negative Reviews",
+			"3 - Iterate ReviewStats"
+		};
+
+		const size_t size = sizeof(menus) / sizeof(menus[0]);
+
+		while (true) {
+			std::string s;
+
+			std::cout << std::endl;
+			for (int i = 0; i < size; i++) {
+				std::cout << menus[i] << std::endl;
+			}
+			std::cin >> s;
+
+			if (!isNumber(s)) {
+				std::cout << "Please enter a number\n";
+				continue;
+			}
+
+			const uint16_t val = std::stoi(s);
+			
+			if (val < 1 || val > size) {
+				std::cout << "Enter a number in range 1-" << size << std::endl;
+				continue;
+			}
+			
+			break;
+		}
+	}
+
+	bool isNumber(const std::string& s) {
+		return !s.empty() && std::find_if(s.begin(),
+			s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
 	}
 
 /// This block need refactoring
