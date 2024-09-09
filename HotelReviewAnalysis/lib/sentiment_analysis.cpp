@@ -6,7 +6,6 @@
 #include <chrono>
 #include <functional>
 #include <ios>
-#include <thread>
 
 #include "review.h"
 #include "linkedlist.h"
@@ -45,6 +44,7 @@ namespace LinkedListImpl {
 
 	void printAllSentimentScores(LinkedList<ReviewStats>& stats);
 	void printIterateSentimentScores(LinkedList<ReviewStats>& stats);
+	void printSelectedSentimentScore(LinkedList<ReviewStats>& stats);
 
 	bool isNumber(const std::string& s);
 	void processWord(std::string& word);
@@ -258,7 +258,8 @@ namespace LinkedListImpl {
 		const std::string menus[] {
 			"1 - Get Sentiment Scores for all reviews.",
 			"2 - Iterate Through Each Review.",
-			"3 - Select Review by Review Number."
+			"3 - Select Review by Review Number.",
+			"0 - Back"
 		};
 
 		const size_t size = sizeof(menus) / sizeof(menus[0]);
@@ -271,6 +272,9 @@ namespace LinkedListImpl {
 			}
 			std::cout << ">> ";
 			std::cin >> s;
+
+			// Remove newline from input buffer
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 			if (!isNumber(s)) {
 				std::cout << "Please enter a number.\n";
@@ -289,18 +293,22 @@ namespace LinkedListImpl {
 				break;
 
 			case 3:
+				printSelectedSentimentScore(res.reviewStats);
 				break;
+
+			case 0:
+				system("cls");
+				return;
 
 			default:
 				std::cout << "Value " << val << " is out of range (1-" << size << ").\n";
 				break;
-			
 			}
 		}
 	}
 
 
-	/// Linked List Functions
+	/// Linked List Print Functions
 	void printAllSentimentScores(LinkedList<ReviewStats>& stats) {
 		while (stats.hasNext()) {
 			stats.getValue().log();
@@ -315,20 +323,58 @@ namespace LinkedListImpl {
 
 			system("cls");
 			stats.getValue().log();
-			stats.next();
 
 			std::cout << std::endl;
 			std::cout << "Press (Q) to exit loop.\n";
 			std::cout << "Press Enter to continue...\n";
-			std::cin >> s;
+			std::getline(std::cin, s);
 
 			if (s.size() == 1 && tolower(s[0]) == 'q') {
 				stats.reset();
+				system("cls");
 				std::cout << "Exiting loop.\n";
-				break;
+				return;
+			}
+
+			stats.next();
+			
+			if (s.empty()) {
+				continue;
 			}
 		}
+		system("cls");
 		stats.reset();
+	}
+
+	void printSelectedSentimentScore(LinkedList<ReviewStats>& stats) {
+		while (true) {
+			std::string s;
+			std::cout << "Which Review Number do you want to view?: ";
+
+			std::cin >> s;
+
+			if (s.size() == 1 && tolower(s[0]) == 'q') {
+				system("cls");
+				return;
+			}
+
+			if (!isNumber(s)) {
+				std::cout << "Please enter a number.\n";
+				continue;
+			}
+
+			const size_t val = std::stoi(s);
+
+			for (int i = 1; i < val; i++) {
+				if (!stats.hasNext()) {
+					std::out_of_range("[ERROR] LinkedList next pointer points to a nullptr.");
+				}
+				stats.next();
+			}
+			stats.getValue().log();
+			std::cout << std::endl;
+			stats.reset();
+		}
 	}
 
 
