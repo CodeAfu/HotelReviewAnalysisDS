@@ -4,15 +4,15 @@
 
 #include "review.h"
 
-Review::Review(std::string& comment, unsigned int rating)
-	: comment(comment), rating(rating) { }
+Review::Review(const int id, std::string& comment, unsigned int rating)
+	: id(id), comment(comment), rating(rating) { }
 
-Review::Review(std::string& reviewStr)
-	: comment(parseComment(reviewStr)), rating(parseRating(reviewStr)) { }
+Review::Review(std::string& reviewStr, const int id)
+	: id(id), comment(parseComment(reviewStr)), rating(parseRating(reviewStr)) { }
 
 
 bool Review::operator==(const Review& other) const {
-	return comment == other.comment && rating == other.rating;
+	return id == other.id && comment == other.comment && rating == other.rating;
 }
 
 bool Review::operator<(const Review& other) const {

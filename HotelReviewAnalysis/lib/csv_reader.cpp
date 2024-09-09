@@ -91,9 +91,11 @@ namespace csvreader {
 		std::string header;
 		std::getline(myFile, header);
 
+		int idx = 1;
 		while (getline(myFile, line)) {
-			Review rev(line);
+			Review rev(line, idx);
 			ll.insertAtEnd(rev);
+			idx++;
 		}
 
 		std::cout << std::format("File Read Succesully: {}\n", fileName);

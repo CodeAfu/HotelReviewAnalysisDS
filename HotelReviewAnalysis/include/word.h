@@ -28,7 +28,7 @@ struct Word {
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Word& wordCount) {
-		os << wordCount.word << ":" << wordCount.count;
+		os << wordCount.word << " (" << wordCount.count << ")";
 		return os;
 	}
 };

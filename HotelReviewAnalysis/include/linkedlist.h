@@ -1,63 +1,8 @@
 #pragma once
-
 #include "node.h"
-//#include "review.h"
-
-#if 0
-template<typename T>
-class LinkedList;
-
-template<typename T>
-class LinkedListIterator {
-public:
-	using NodeType = Node<T>;
-	using PointerType = NodeType*;
-	using ReferenceType = T&;
-
-public:
-	LinkedListIterator(PointerType ptr) : m_Ptr(ptr) { }
-
-	ReferenceType operator*() const {
-		return m_Ptr->value;
-	}
-
-	LinkedListIterator& operator++() {
-		m_Ptr = m_Ptr->next;
-		return *this;
-	}
-
-	LinkedListIterator operator++(int) {
-		LinkedListIterator temp = *this;
-		m_Ptr = m_Pr->next;
-		return temp;
-	}
-
-	bool operator==(const LinkedListIterator& other) const {
-		return m_Ptr == other.m_Ptr;
-	}
-
-	bool operator!=(const LinkedListIterator& other) const {
-		return m_Ptr != other.m_Ptr;
-	}
-
-	ReferenceType operator*() const {
-		return m_Ptr->value;
-	}
-
-private:
-	PointerType m_Ptr;
-};
-#endif
 
 template<typename T>
 class LinkedList {
-
-#if 0
-public:
-	using ValueType = T;
-	using Iterator = LinkedListIterator<LinkedList<T>>;
-#endif
-
 public:
 	LinkedList();
 	~LinkedList();
@@ -85,21 +30,19 @@ public:
 
 	T* linearSearch(const T& value);
 	T* binarySearch(const T& value);
+	void mergeSort();
 
 	// Print
 	void display();
-
-#if 0
-public:
-	// Iterator Implementation
-	Iterator begin() { return Iterator(head); }
-	Iterator end() { return Iterator(tail->next); }
-#endif
 
 private:
 	Node<T>* head;
 	Node<T>* current;
 	Node<T>* tail;
 
+private:
 	void copyFrom(const LinkedList<T>& other);
+	Node<T>* split(Node<T>* head);
+	Node<T>* merge(Node<T>* first, Node<T>* second);
+	void swapNodes(Node<T>* x, Node<T>* y);
 };

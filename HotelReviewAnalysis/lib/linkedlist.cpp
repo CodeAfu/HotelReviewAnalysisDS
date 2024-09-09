@@ -1,7 +1,10 @@
 #include <iostream>
+#include <functional>
+
 #include "linkedlist.h";
 #include "review.h";
 #include "review_stats.h"
+#include "result.h"
 #include "word.h"
 
 template<typename T>
@@ -223,6 +226,28 @@ T* LinkedList<T>::binarySearch(const T& value) {
 }
 
 template<typename T>
+void LinkedList<T>::mergeSort() {
+	throw std::runtime_error("Merge Sort is only supported for 'Word' struct.");
+}
+
+template<>
+void LinkedList<Word>::mergeSort() {
+	Node<Word>* start = head;
+	Node<Word>* end = nullptr;
+
+	Node<Word>* mid = start;
+	Node<Word>* fast = start->next;
+
+	while (start != end) {
+		while (fast != end && fast->next != end) {
+			mid = mid->next;
+			fast = fast->next->next;
+		}
+	}
+
+}
+
+template<typename T>
 void LinkedList<T>::display() {
 	if (!head) {
 		std::cout << "LinkedList not initialized\n";
@@ -245,6 +270,83 @@ void LinkedList<T>::copyFrom(const LinkedList<T>& other) {
 		insertAtEnd(temp->value);
 		temp = temp->next;
 	}
+}
+
+template<typename T>
+Node<T>* LinkedList<T>::split(Node<T>* head) {
+    throw std::runtime_error("'split()' is only required for Merge Sort.");
+}
+
+template<>
+Node<Word>* LinkedList<Word>::split(Node<Word>* head) {
+	// Look through this again..
+	Node<Word>* fast = head;
+	Node<Word>* slow = head;
+
+	while (fast != nullptr && fast->next != nullptr) {
+		fast = fast->next->next;
+		if (fast != nullptr) {
+			slow = slow->next;
+		}
+	}
+
+	Node<Word>* temp = slow->next;
+	slow->next = nullptr;
+	return temp;
+}
+
+
+template<typename T>
+Node<T>* LinkedList<T>::merge(Node<T>* first, Node<T>* second) {
+	throw std::runtime_error("'merge()' is only required for Merge Sort.");
+}
+
+//template<>
+//Node<Word>* LinkedList<Word>::merge(Node<Word>* first, Node<Word>* second) {
+//	// TODO
+//}
+
+// O(n)
+template<typename T>
+void LinkedList<T>::swapNodes(Node<T>* x, Node<T>* y) {
+	if (x == y || !x || !y) {
+		return;
+	}
+
+	Node<T>* prevX = nullptr;
+	Node<T>* prevY = nullptr;
+	Node<T>* curr = this->head;
+
+	while (curr && curr->next) {
+		if (curr->next == x) {
+			prevX = curr;
+		}
+		if (curr->next == y) {
+			prevY = curr;
+		}
+		curr = curr->next;
+	}
+
+	// Check if prevX or prevY is null
+	if (!prevX && head != x || !prevY && head != y) {
+		return;
+	}
+
+	// Change next pointers
+	if (prevX) {
+		prevX->next = y;
+	} else {
+		head = y;
+	}
+	if (prevY) {
+		prevY->next = x;
+	} else {
+		head = x;
+	}
+
+	Node<T>* temp = x->next;
+	x->next = y->next;
+	y->next = temp;
 }
 
 template class LinkedList<Review>;

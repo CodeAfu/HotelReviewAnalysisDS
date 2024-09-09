@@ -16,17 +16,9 @@ struct ReviewStats {
 	unsigned int numNeg = 0;
 	unsigned int numWords = 0;
 	std::chrono::microseconds timeInMillis;
-
 	int rawSentimentScore;
 
-	/// TODO: Add Semantic Analysis Data Here
-	void calculateSentimentScore() {
-		const int16_t rawSentiment = numPos - numNeg;
-		const int16_t maxRawScore = numPos + numNeg;
-		const int16_t minRawScore = -maxRawScore;
-		const long normalizedScore = static_cast<double>(rawSentiment - minRawScore) / (maxRawScore - minRawScore);
-		this->rawSentimentScore = static_cast<int>(1 + (4 * normalizedScore));
-	}
+	void calculateSentimentScore();
 
 	bool operator==(const ReviewStats& other) const;
 	bool operator<(const ReviewStats& other) const;

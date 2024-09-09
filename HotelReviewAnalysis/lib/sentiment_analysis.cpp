@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <format>
 #include <chrono>
+#include <functional>
 #include <ios>
 #include <thread>
 
@@ -21,7 +22,6 @@ using Ms = std::chrono::milliseconds;
 using Mu = std::chrono::microseconds;
 using Timer = std::chrono::high_resolution_clock;
 
-
 struct Data {
 	LinkedList<Review>& reviews;
 	LinkedList<std::string>& positiveWords;
@@ -31,67 +31,23 @@ struct Data {
 		: reviews(rev), positiveWords(pos), negativeWords(neg) { }
 };
 
-#if 0
-struct Result {
-	LinkedList<ReviewStats> reviewStats; // Information about each review, iterate through each to get details
-	LinkedList<Word> wordsPos;
-	LinkedList<Word> wordsNeg;
-	unsigned int numReviews = 0;
-	unsigned int numWords = 0;
-	unsigned int numPos = 0;
-	unsigned int numNeg = 0;
-	Ms duration;
-
-	void log();
-
-	Result& operator+=(const ReviewStats rhs) {
-		this->reviewStats.insertAtEnd(rhs);
-
-		// Merge wordsPos
-		Node<Word>* rhsPosNode = rhs.wordsPos.getHead();
-		while (rhsPosNode) {
-			Word rhsWord = rhsPosNode->value;
-			Word* word = this->wordsPos.binarySearch(rhsWord);
-			if (word) {
-				word->count += 1;
-			}
-			else {
-				this->wordsPos.insertSorted(rhsWord);
-			}
-			rhsPosNode = rhsPosNode->next;
-		}
-
-		// Merge wordsNeg
-		Node<Word>* rhsNegNode = rhs.wordsNeg.getHead();
-		while (rhsNegNode) {
-			Word rhsWord = rhsNegNode->value;
-			Word* word = this->wordsNeg.binarySearch(rhsWord);
-			if (word) {
-				word->count += 1;
-			}
-			else {
-				this->wordsNeg.insertSorted(rhsWord);
-			}
-			rhsNegNode = rhsNegNode->next;
-		}
-
-		this->numPos += rhs.numPos;
-		this->numNeg += rhs.numNeg;
-		this->numWords += rhs.numWords;
-
-		return *this;
-	}
-};
-#endif
-
 namespace LinkedListImpl {
+
 	Result analyze(const Data& data);
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
-	void buildResultLinear(const std::string& word, const Data& data, Result& res);
-	//void statsProcessor(ReviewStats& stats, Result& res);
-	void processWord(std::string& word);
+	void buildResultFibonacci(const std::string word, const Data& data, Result& res, ReviewStats& stats);
+
 	void menuLoop(Result& res);
+	void displayPositiveWords(Result& res);
+	void displayNegativeWords(Result& res);
+	void iterateStats(Result& res);
+	void sentimentAnalysis(Result& res);
+
+	void printAllSentimentScores(LinkedList<ReviewStats>& stats);
+	void printIterateSentimentScores(LinkedList<ReviewStats>& stats);
+
 	bool isNumber(const std::string& s);
+	void processWord(std::string& word);
 
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile) {
 
@@ -113,10 +69,12 @@ namespace LinkedListImpl {
 
 		/// Prompts
 		menuLoop(res);
+		
+		/// Debug
 	}
 
 	Result analyze(const Data& data) {
-		const int DEBUG_LIMIT = -1; // set to -1 for real use
+		const int DEBUG_LIMIT = 100; // set to -1 for real use
 		int iterations = 0;
 		
 		const auto start = Timer::now();
@@ -144,13 +102,13 @@ namespace LinkedListImpl {
 				//buildResultLinear(s, data, res);
 				buildResultBinary(s, data, res, stats);
 			}
+
+			/// Calculate Sentiment Score for each review
+			stats.calculateSentimentScore();
 			
 			/// Append stats to result
 			res += stats;
 			res.numReviews++;
-
-			/// Calculate Sentiment Score for each review
-			stats.calculateSentimentScore();
 
 			/// Limit iterations for debug
 			iterations++;
@@ -170,6 +128,8 @@ namespace LinkedListImpl {
 		}
 
 		res.duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
+
+		data.reviews.reset(); // Reset current pointer to head
 		return res;
 	}
 	
@@ -218,6 +178,167 @@ namespace LinkedListImpl {
 		}
 	}
 
+
+	void buildResultFibonacci(const std::string word, const Data& data, Result& res, ReviewStats& stats) {
+
+	}
+
+
+	void menuLoop(Result& res) {
+		const std::string menus[] = {
+			"1 - Display Positive Words",
+			"2 - Display Negative Words",
+			"3 - Iterate through ReviewStats",
+			"4 - Generate Sentiment Analysis",
+			"0 - Exit Application"
+		};
+		const size_t size = sizeof(menus) / sizeof(menus[0]);
+
+		while (true) {
+			std::string s;
+
+			std::cout << std::endl;
+			for (int i = 0; i < size; i++) {
+				std::cout << menus[i] << std::endl;
+			}
+
+			std::cout << ">> ";
+			std::cin >> s;
+
+			if (!isNumber(s)) {
+				std::cout << "Please enter a number.\n";
+				continue;
+			}
+			const uint16_t val = std::stoi(s);
+
+			switch (val) {
+			case 1:
+				displayPositiveWords(res);
+				break;
+
+			case 2:
+				displayNegativeWords(res);
+				break;
+
+			case 3:
+				iterateStats(res);
+				break;
+
+			case 4:
+				sentimentAnalysis(res);
+				break;
+			case 0:
+				return;
+			}
+		}
+	}
+
+
+	/// Menus
+	void displayPositiveWords(Result& res) {
+		res.wordsPos.display();
+	}
+
+	void displayNegativeWords(Result& res) {
+		res.wordsNeg.display();
+	}
+
+	void iterateStats(Result& res) {
+		res.reviewStats.reset();
+		while (res.reviewStats.hasNext()) {
+			res.reviewStats.getValue().log();
+			std::cin.get();
+			res.reviewStats.next();
+		}
+		res.reviewStats.reset();
+	}
+
+	void sentimentAnalysis(Result& res) {
+		system("cls");
+		const std::string menus[] {
+			"1 - Get Sentiment Scores for all reviews.",
+			"2 - Iterate Through Each Review.",
+			"3 - Select Review by Review Number."
+		};
+
+		const size_t size = sizeof(menus) / sizeof(menus[0]);
+
+		while (true) {
+			std::string s;
+
+			for (int i = 0; i < size; i++) {
+				std::cout << menus[i] << std::endl;
+			}
+			std::cout << ">> ";
+			std::cin >> s;
+
+			if (!isNumber(s)) {
+				std::cout << "Please enter a number.\n";
+				continue;
+			}
+
+			const uint16_t val = stoi(s);
+
+			switch (val) {
+			case 1:
+				printAllSentimentScores(res.reviewStats);
+				break;
+
+			case 2:
+				printIterateSentimentScores(res.reviewStats);
+				break;
+
+			case 3:
+				break;
+
+			default:
+				std::cout << "Value " << val << " is out of range (1-" << size << ").\n";
+				break;
+			
+			}
+		}
+	}
+
+
+	/// Linked List Functions
+	void printAllSentimentScores(LinkedList<ReviewStats>& stats) {
+		while (stats.hasNext()) {
+			stats.getValue().log();
+			stats.next();
+		}
+		stats.reset();
+	}
+
+	void printIterateSentimentScores(LinkedList<ReviewStats>& stats) {
+		while (stats.hasNext()) {
+			std::string s;
+
+			system("cls");
+			stats.getValue().log();
+			stats.next();
+
+			std::cout << std::endl;
+			std::cout << "Press (Q) to exit loop.\n";
+			std::cout << "Press Enter to continue...\n";
+			std::cin >> s;
+
+			if (s.size() == 1 && tolower(s[0]) == 'q') {
+				stats.reset();
+				std::cout << "Exiting loop.\n";
+				break;
+			}
+		}
+		stats.reset();
+	}
+
+
+	/// Helper Functions
+	bool isNumber(const std::string& s) {
+		return !s.empty() && std::find_if(s.begin(),
+			s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+	}
+
+
 	void processWord(std::string& word) {
 		const char excludeChars[] = { ',', '\"', '\'', '.', '/', ':', ';', '!', '?' };
 		const size_t n = sizeof(excludeChars) / sizeof(char);
@@ -228,91 +349,4 @@ namespace LinkedListImpl {
 			return std::find(excludeChars, excludeChars + n, c) != excludeChars + n;
 			}), word.end());
 	}
-
-	void menuLoop(Result& res) {
-		const std::string menus[] = {
-			"1 - Positive Reviews",
-			"2 - Negative Reviews",
-			"3 - Iterate ReviewStats"
-		};
-
-		const size_t size = sizeof(menus) / sizeof(menus[0]);
-
-		while (true) {
-			std::string s;
-
-			std::cout << std::endl;
-			for (int i = 0; i < size; i++) {
-				std::cout << menus[i] << std::endl;
-			}
-			std::cin >> s;
-
-			if (!isNumber(s)) {
-				std::cout << "Please enter a number\n";
-				continue;
-			}
-
-			const uint16_t val = std::stoi(s);
-			
-			if (val < 1 || val > size) {
-				std::cout << "Enter a number in range 1-" << size << std::endl;
-				continue;
-			}
-			
-			break;
-		}
-	}
-
-	bool isNumber(const std::string& s) {
-		return !s.empty() && std::find_if(s.begin(),
-			s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
-	}
-
-/// This block need refactoring
-#if 0
-	void buildResultLinear(const std::string& word, const Data& data, Result& res) {
-		/// Calc Positive
-		while (data.positiveWords.getCurrentNode()) {
-
-			const std::string& s = data.positiveWords.getValue();
-
-			if (s == word) {
-				Word word();
-				res.wordsPos.insertAtEnd(word);
-				res.numPos++;
-				std::cout << s << "+";
-				//break;
-			}
-
-			if (!data.positiveWords.hasNext()) 
-				break;
-
-			data.positiveWords.next();
-		}
-
-		/// Calc Negative
-		while (data.negativeWords.getCurrentNode()) {
-
-			const std::string& s = data.negativeWords.getValue();
-
-			if (s == word) {
-				res.wordsNeg.insertAtEnd(word);
-				res.numNeg++;
-				std::cout << s << "-";
-				//break;
-			}
-
-			if (!data.negativeWords.hasNext())
-				break;
-
-			data.negativeWords.next();
-		}
-
-		// Reset Position of LinkedList Current Pointer
-		data.positiveWords.reset();
-		data.negativeWords.reset();
-
-		res.numWords++;
-	}
-#endif
 }

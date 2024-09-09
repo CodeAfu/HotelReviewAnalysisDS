@@ -18,9 +18,24 @@ std::ostream& operator<<(std::ostream& os, const ReviewStats& reviewStats) {
 	return os;
 }
 
+void ReviewStats::calculateSentimentScore() {
+	const int16_t rawSentiment = numPos - numNeg;
+	const int16_t maxRawScore = numPos + numNeg;
+
+	if (maxRawScore == 0) {
+		this->rawSentimentScore = 3;
+		return;
+	}
+
+	const double normalizedScore = static_cast<double>(rawSentiment) / maxRawScore;
+	this->rawSentimentScore = static_cast<int>(3 + 2 * normalizedScore	);
+}
+
 void ReviewStats::log() {
+	std::cout << "Review #" << review.id << std::endl;
 	std::cout << "Comment: " << review.comment << std::endl;
-	std::cout << "Rating: " << review.rating << std::endl;
+	std::cout << "User Rating: " << review.rating << std::endl;
+	std::cout << "Sentiment Rating: " << rawSentimentScore << std::endl;
 	std::cout << "Positive Words: "; wordsPos.display();
 	std::cout << "Negative Words: "; wordsNeg.display();
 	std::cout << "Positive Num: " << numPos << std::endl;

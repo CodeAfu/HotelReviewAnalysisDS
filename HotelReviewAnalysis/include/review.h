@@ -1,12 +1,13 @@
 #pragma once
 
 struct Review {
+	int id;
 	std::string comment;
 	unsigned int rating;
 
-	Review() : comment(""), rating(0) { };
-	Review(std::string& comment, unsigned int rating);
-	Review(std::string& reviewStr);
+	Review() : id(-1), comment(""), rating(0) { };
+	Review(const int id, std::string& comment, unsigned int rating);
+	Review(std::string& reviewStr, const int id);
 
 	bool operator==(const Review& other) const;
 	bool operator<(const Review& other) const;
