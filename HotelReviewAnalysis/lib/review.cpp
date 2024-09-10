@@ -4,6 +4,8 @@
 
 #include "review.h"
 
+Review::Review() : id(-1), comment(""), rating(0) { };
+
 Review::Review(const int id, std::string& comment, unsigned int rating)
 	: id(id), comment(comment), rating(rating) { }
 

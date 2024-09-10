@@ -5,7 +5,7 @@ struct Review {
 	std::string comment;
 	unsigned int rating;
 
-	Review() : id(-1), comment(""), rating(0) { };
+	Review();
 	Review(const int id, std::string& comment, unsigned int rating);
 	Review(std::string& reviewStr, const int id);
 

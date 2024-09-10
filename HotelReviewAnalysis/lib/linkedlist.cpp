@@ -226,24 +226,45 @@ T* LinkedList<T>::binarySearch(const T& value) {
 }
 
 template<typename T>
-void LinkedList<T>::mergeSort() {
-	throw std::runtime_error("Merge Sort is only supported for 'Word' struct.");
+void LinkedList<T>::bubbleSort() {
+	throw std::runtime_error("Sorting algorithms are only compatible with the 'Word' struct.");
+}
+
+
+/// TODO: Test.
+template<>
+void LinkedList<Word>::bubbleSort() {
+	if (head == nullptr) {
+		return;
+	}
+
+	bool swapped;
+	Node<Word>* current = head;
+	Node<Word>* lastSorted = nullptr;
+
+	do {
+		swapped = false;
+		current = head;
+
+		while (current->next != lastSorted) {
+			if (current->next->value < current->value) {
+				swapValues(current, current->next);
+				swapped = true;
+			}
+			current = current->next;
+		}
+		lastSorted = current;
+	} while (swapped);
+}
+
+template<typename T>
+void LinkedList<T>::quickSort() {
+	throw std::runtime_error("Sorting algorithms are only compatible with the 'Word' struct.");
 }
 
 template<>
-void LinkedList<Word>::mergeSort() {
-	Node<Word>* start = head;
-	Node<Word>* end = nullptr;
-
-	Node<Word>* mid = start;
-	Node<Word>* fast = start->next;
-
-	while (start != end) {
-		while (fast != end && fast->next != end) {
-			mid = mid->next;
-			fast = fast->next->next;
-		}
-	}
+void LinkedList<Word>::quickSort() {
+	Node<Word>* n = head;
 
 }
 
@@ -295,16 +316,12 @@ Node<Word>* LinkedList<Word>::split(Node<Word>* head) {
 	return temp;
 }
 
-
 template<typename T>
-Node<T>* LinkedList<T>::merge(Node<T>* first, Node<T>* second) {
-	throw std::runtime_error("'merge()' is only required for Merge Sort.");
+void LinkedList<T>::swapValues(Node<T>* x, Node<T>* y) {
+	T temp = x->value;
+	x->value = y->value;
+	y->value = temp;
 }
-
-//template<>
-//Node<Word>* LinkedList<Word>::merge(Node<Word>* first, Node<Word>* second) {
-//	// TODO
-//}
 
 // O(n)
 template<typename T>
@@ -347,6 +364,11 @@ void LinkedList<T>::swapNodes(Node<T>* x, Node<T>* y) {
 	Node<T>* temp = x->next;
 	x->next = y->next;
 	y->next = temp;
+}
+
+template<typename T>
+Node<T>* partition(Node<T>* head, Node<T>* end, Node<T>** newHead, Node<T>** newEnd) {
+
 }
 
 template class LinkedList<Review>;

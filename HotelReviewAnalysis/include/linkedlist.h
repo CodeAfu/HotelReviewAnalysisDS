@@ -30,7 +30,8 @@ public:
 
 	T* linearSearch(const T& value);
 	T* binarySearch(const T& value);
-	void mergeSort();
+	void bubbleSort();
+	void quickSort();
 
 	// Print
 	void display();
@@ -43,6 +44,7 @@ private:
 private:
 	void copyFrom(const LinkedList<T>& other);
 	Node<T>* split(Node<T>* head);
-	Node<T>* merge(Node<T>* first, Node<T>* second);
+	void swapValues(Node<T>* x, Node<T>* y);
 	void swapNodes(Node<T>* x, Node<T>* y);
+	Node<T>* partition(Node<T>* head, Node<T>* end, Node<T>** newHead, Node<T>** newEnd);
 };

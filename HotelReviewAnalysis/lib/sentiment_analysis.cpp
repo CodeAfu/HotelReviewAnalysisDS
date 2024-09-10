@@ -367,7 +367,7 @@ namespace LinkedListImpl {
 
 			for (int i = 1; i < val; i++) {
 				if (!stats.hasNext()) {
-					std::out_of_range("[ERROR] LinkedList next pointer points to a nullptr.");
+					throw std::out_of_range("[ERROR] LinkedList next pointer points to a nullptr.");
 				}
 				stats.next();
 			}
