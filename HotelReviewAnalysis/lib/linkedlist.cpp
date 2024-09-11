@@ -8,7 +8,7 @@
 #include "word.h"
 
 template<typename T>
-LinkedList<T>::LinkedList() : head(nullptr), current(nullptr), tail(nullptr) { }
+LinkedList<T>::LinkedList() : head(nullptr), current(nullptr), tail(nullptr), size(0) { }
 
 template<typename T>
 LinkedList<T>::~LinkedList() {
@@ -16,6 +16,7 @@ LinkedList<T>::~LinkedList() {
 	while (n) {
 		Node<T>* next = n->next;
 		delete n;
+		size--;
 		n = next;
 	}
 }
@@ -51,6 +52,7 @@ LinkedList<T>& LinkedList<T>::operator+=(const LinkedList<T>& other) {
 
 	while (otherNode != nullptr) {
 		this->insertAtEnd(otherNode->value);
+		size++;
 		otherNode = otherNode->next;
 	}
 
@@ -68,6 +70,7 @@ void LinkedList<T>::insertAtBeginning(const T& val) {
 		current = n;
 		tail = n;
 	}
+	size++;
 }
 
 template<typename T>
@@ -80,11 +83,13 @@ void LinkedList<T>::insertAtEnd(const T& val) {
 		head = n;
 		current = n;
 		tail = n;
+		size++;
 		return;
 	} 
 
 	tail->next = n;
 	tail = n;
+	size++;
 }
 
 template<typename T>
@@ -100,6 +105,7 @@ void LinkedList<T>::insertSorted(const T& val) {
 		if (!tail) {
 			tail = n;
 		}
+		size++;
 		return;
 	}
 
@@ -115,6 +121,7 @@ void LinkedList<T>::insertSorted(const T& val) {
 	if (!n->next) {
 		tail = n;
 	}
+	size++;
 }
 
 template<typename T>
@@ -164,6 +171,12 @@ Node<T>* LinkedList<T>::getTail() const {
 	//}
 	return tail;
 }
+
+template<typename T>
+int LinkedList<T>::getSize() const {
+	return size;
+}
+
 
 template<typename T>
 bool LinkedList<T>::hasNext() {
@@ -264,7 +277,7 @@ void LinkedList<T>::quickSort() {
 
 template<>
 void LinkedList<Word>::quickSort() {
-	Node<Word>* n = head;
+	head = quickSortRecursive(head, this->getTail());
 
 }
 
@@ -290,30 +303,8 @@ void LinkedList<T>::copyFrom(const LinkedList<T>& other) {
 	while (temp) {
 		insertAtEnd(temp->value);
 		temp = temp->next;
+		size++;
 	}
-}
-
-template<typename T>
-Node<T>* LinkedList<T>::split(Node<T>* head) {
-    throw std::runtime_error("'split()' is only required for Merge Sort.");
-}
-
-template<>
-Node<Word>* LinkedList<Word>::split(Node<Word>* head) {
-	// Look through this again..
-	Node<Word>* fast = head;
-	Node<Word>* slow = head;
-
-	while (fast != nullptr && fast->next != nullptr) {
-		fast = fast->next->next;
-		if (fast != nullptr) {
-			slow = slow->next;
-		}
-	}
-
-	Node<Word>* temp = slow->next;
-	slow->next = nullptr;
-	return temp;
 }
 
 template<typename T>
@@ -367,8 +358,94 @@ void LinkedList<T>::swapNodes(Node<T>* x, Node<T>* y) {
 }
 
 template<typename T>
-Node<T>* partition(Node<T>* head, Node<T>* end, Node<T>** newHead, Node<T>** newEnd) {
+Node<T>* LinkedList<T>::quickSortRecursive(Node<T>* head, Node<T>* end) {
+	if (head == nullptr || head == end) {
+		return head;
+	}
 
+	Node<T>* newHead = nullptr;
+	Node<T>* newEnd = nullptr;
+
+	Node<T>* pivot = partition(head, end, &newHead, &newEnd);
+
+	if (newHead != pivot) {
+		Node<T>* temp = newHead;
+		while (temp->next != pivot) {
+			temp = temp->next;
+		}
+		temp->next = nullptr;
+		newHead = quickSortRecursive(newHead, temp);
+		temp = getTailNode(newHead);
+		temp->next = pivot;
+	}
+
+	pivot->next = quickSortRecursive(pivot->next, newEnd);
+
+	return newHead;
+}
+
+template<typename T>
+Node<T>* LinkedList<T>::partition(Node<T>* head, Node<T>* end, Node<T>** newHead, Node<T>** newEnd) {
+	Node<T>* pivot = end;
+	Node<T>* prev = nullptr;
+	Node<T>* current = head;
+	Node<T>* tail = pivot;
+
+	*newHead = nullptr;
+	*newEnd = nullptr;
+
+	while (current != pivot) {
+		if (current->value < pivot->value) {
+			if (*newHead == nullptr) {
+				*newHead = current;
+			}
+			prev = current;
+			current = current->next;
+		} else {
+			if (prev != nullptr) {
+				prev->next = current->next;
+			}
+			Node<T>* temp = current->next;
+			current->next = nullptr;
+			tail->next = current;
+			tail = current;
+			current = temp;
+		}
+	}
+
+	if (*newHead == nullptr) {
+		*newHead = pivot;
+	}
+	
+	*newEnd = tail;
+	
+	return pivot;
+}
+
+
+template<typename T>
+Node<T>* LinkedList<T>::concatenate(Node<T>* left, Node<T>* pivot, Node<T>* right) {
+	Node<T>* result = nullptr;
+
+	if (left != nullptr) {
+		result = left;
+		Node<T>* tail = getTailNode(left);
+		tail->next = pivot;
+	} else {
+		result = pivot;
+	}
+
+	pivot->next = right;
+	return result;
+}
+
+
+template<typename T>
+Node<T>* LinkedList<T>::getTailNode(Node<T>* node) {
+	while (node != nullptr && node->next != nullptr) {
+		node = node->next;
+	}
+	return node;
 }
 
 template class LinkedList<Review>;

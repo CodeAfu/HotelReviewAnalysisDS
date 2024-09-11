@@ -24,6 +24,7 @@ public:
 	Node<T>* getHead() const;
 	Node<T>* getCurrentNode();
 	Node<T>* getTail() const;
+	int getSize() const;
 	bool hasNext();
 	void next();
 	void reset();
@@ -41,10 +42,14 @@ private:
 	Node<T>* current;
 	Node<T>* tail;
 
+	uint32_t size;
+	
 private:
 	void copyFrom(const LinkedList<T>& other);
-	Node<T>* split(Node<T>* head);
 	void swapValues(Node<T>* x, Node<T>* y);
 	void swapNodes(Node<T>* x, Node<T>* y);
+	Node<T>* quickSortRecursive(Node<T>* head, Node<T>* end);
 	Node<T>* partition(Node<T>* head, Node<T>* end, Node<T>** newHead, Node<T>** newEnd);
+	Node<T>* concatenate(Node<T>* left, Node<T>* pivot, Node<T>* right);
+	Node<T>* getTailNode(Node<T>* node);
 };

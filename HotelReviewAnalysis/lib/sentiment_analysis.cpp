@@ -34,7 +34,7 @@ namespace LinkedListImpl {
 
 	Result analyze(const Data& data);
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
-	void buildResultFibonacci(const std::string word, const Data& data, Result& res, ReviewStats& stats);
+	void buildResultLinear(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
 
 	void menuLoop(Result& res);
 	void displayPositiveWords(Result& res);
@@ -67,10 +67,11 @@ namespace LinkedListImpl {
 		std::system("cls");
 		res.log();
 
+		/// Debug
+
+
 		/// Prompts
 		menuLoop(res);
-		
-		/// Debug
 	}
 
 	Result analyze(const Data& data) {
@@ -178,8 +179,7 @@ namespace LinkedListImpl {
 		}
 	}
 
-
-	void buildResultFibonacci(const std::string word, const Data& data, Result& res, ReviewStats& stats) {
+	void buildResultLinear(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
 
 	}
 
