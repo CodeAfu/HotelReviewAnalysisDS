@@ -258,9 +258,9 @@ void LinkedList<Word>::bubbleSort() {
 	do {
 		swapped = false;
 		current = head;
-
+		
 		while (current->next != lastSorted) {
-			if (current->next->value < current->value) {
+			if (current->next->value.count < current->value.count) {
 				swapValues(current, current->next);
 				swapped = true;
 			}
@@ -272,13 +272,7 @@ void LinkedList<Word>::bubbleSort() {
 
 template<typename T>
 void LinkedList<T>::quickSort() {
-	throw std::runtime_error("Sorting algorithms are only compatible with the 'Word' struct.");
-}
-
-template<>
-void LinkedList<Word>::quickSort() {
 	head = quickSortRecursive(head, this->getTail());
-
 }
 
 template<typename T>
@@ -359,6 +353,7 @@ void LinkedList<T>::swapNodes(Node<T>* x, Node<T>* y) {
 
 template<typename T>
 Node<T>* LinkedList<T>::quickSortRecursive(Node<T>* head, Node<T>* end) {
+	//throw std::runtime_error("Quick Sort Recursive is only compatible with the 'Word' Struct.");
 	if (head == nullptr || head == end) {
 		return head;
 	}
@@ -384,12 +379,44 @@ Node<T>* LinkedList<T>::quickSortRecursive(Node<T>* head, Node<T>* end) {
 	return newHead;
 }
 
+//template<>
+//Node<Word>* LinkedList<Word>::quickSortRecursive(Node<Word>* head, Node<Word>* end) {
+//	if (head == nullptr || head == end) {
+//		return head;
+//	}
+//
+//	Node<Word>* newHead = nullptr;
+//	Node<Word>* newEnd = nullptr;
+//	
+//	Node<Word>* pivot = partition(head, end, &newHead, &newEnd);
+//
+//	if (newHead != pivot) {
+//		Node<Word>* temp = newHead;
+//		while (temp->next != pivot) {
+//			temp = temp->next;
+//		}
+//		temp->next = nullptr;
+//		newHead = quickSortRecursive(newHead, temp);
+//		temp = getTailNode(newHead);
+//		temp->next = pivot;
+//	}
+//
+//	pivot->next = quickSortRecursive(pivot->next, newEnd);
+//
+//	return newHead;
+//}
+
 template<typename T>
 Node<T>* LinkedList<T>::partition(Node<T>* head, Node<T>* end, Node<T>** newHead, Node<T>** newEnd) {
-	Node<T>* pivot = end;
-	Node<T>* prev = nullptr;
-	Node<T>* current = head;
-	Node<T>* tail = pivot;
+	throw std::runtime_error("Quick Sort is only compatible with with the 'Word' struct.");
+}
+
+template<>
+Node<Word>* LinkedList<Word>::partition(Node<Word>* head, Node<Word>* end, Node<Word>** newHead, Node<Word>** newEnd) {
+	Node<Word>* pivot = end;
+	Node<Word>* prev = nullptr;
+	Node<Word>* current = head;
+	Node<Word>* tail = pivot;
 
 	*newHead = nullptr;
 	*newEnd = nullptr;
@@ -405,7 +432,7 @@ Node<T>* LinkedList<T>::partition(Node<T>* head, Node<T>* end, Node<T>** newHead
 			if (prev != nullptr) {
 				prev->next = current->next;
 			}
-			Node<T>* temp = current->next;
+			Node<Word>* temp = current->next;
 			current->next = nullptr;
 			tail->next = current;
 			tail = current;

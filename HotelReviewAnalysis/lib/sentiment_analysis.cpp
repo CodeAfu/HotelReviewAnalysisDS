@@ -21,6 +21,10 @@ using Ms = std::chrono::milliseconds;
 using Mu = std::chrono::microseconds;
 using Timer = std::chrono::high_resolution_clock;
 
+enum Selection {
+	binary, linear
+};
+
 struct Data {
 	LinkedList<Review>& reviews;
 	LinkedList<std::string>& positiveWords;
@@ -33,6 +37,9 @@ struct Data {
 namespace LinkedListImpl {
 
 	Result analyze(const Data& data);
+
+	std::function<void(const std::string, const Data&, Result&, ReviewStats&)> getAlgorithm();
+
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
 	void buildResultLinear(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
 
@@ -41,6 +48,7 @@ namespace LinkedListImpl {
 	void displayNegativeWords(Result& res);
 	void iterateStats(Result& res);
 	void sentimentAnalysis(Result& res);
+	void sortWords(Result& res);
 
 	void printAllSentimentScores(LinkedList<ReviewStats>& stats);
 	void printIterateSentimentScores(LinkedList<ReviewStats>& stats);
@@ -50,7 +58,6 @@ namespace LinkedListImpl {
 	void processWord(std::string& word);
 
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile) {
-
 		/// Load File Data
 		LinkedList<Review> reviews = csvreader::asLLReview(revFile);
 		LinkedList<std::string> positiveWords = csvreader::asLLString(posFile);
@@ -71,17 +78,20 @@ namespace LinkedListImpl {
 
 
 		/// Prompts
+		std::cout << std::endl;
 		menuLoop(res);
 	}
 
 	Result analyze(const Data& data) {
-		const int DEBUG_LIMIT = 100; // set to -1 for real use
+		const int DEBUG_LIMIT = 200; // set to -1 for real use
 		int iterations = 0;
-		
-		const auto start = Timer::now();
-
-		/// Process Reviews
 		Result res;
+
+		const std::function<void(const std::string, const Data&, Result&, ReviewStats&)> searchAlgorithm = getAlgorithm();
+		
+		/// Process Reviews
+		const auto start = Timer::now();
+		
 		while (true) {
 			const auto reviewTimer = Timer::now();
 
@@ -100,8 +110,7 @@ namespace LinkedListImpl {
 			/// Get each word in comment
 			while (std::getline(iss, s, ' ')) {
 				processWord(s);
-				//buildResultLinear(s, data, res);
-				buildResultBinary(s, data, res, stats);
+				searchAlgorithm(s, data, res, stats);
 			}
 
 			/// Calculate Sentiment Score for each review
@@ -132,6 +141,66 @@ namespace LinkedListImpl {
 
 		data.reviews.reset(); // Reset current pointer to head
 		return res;
+	}
+
+	std::function<void(const std::string, const Data&, Result&, ReviewStats&)> getAlgorithm() {
+		Selection selection;
+
+		std::string menus[] = {
+			"1 - Binary Search",
+			"2 - Linear Search"
+		};
+		const uint16_t size = sizeof(menus) / sizeof(menus[0]);
+
+		while (true) {
+			std::string s;
+			for (int i = 0; i < size; i++) {
+				std::cout << menus[i] << std::endl;
+			}
+
+			std::cout << ">> ";
+			std::getline(std::cin, s);
+
+			if (!isNumber(s)) {
+				system("cls");
+				std::cout << "Please enter a number.\n";
+				continue;
+			}
+
+			const uint16_t num = std::stoi(s);
+
+			if (num < 1 || num > size) {
+				system("cls");
+				std::cout << "Please select a valid menu.\n";
+				continue;
+			}
+
+			/// Menus
+			if (num == 1) {
+				selection = Selection::binary;
+				break;
+			}
+			else if (num == 2) {
+				selection = Selection::linear;
+				break;
+			}
+		}
+
+		/// Select search algorithm
+		std::function<void(const std::string, const Data&, Result&, ReviewStats&)> searchAlgorithm;
+
+		if (selection == Selection::binary) {
+			system("cls");
+			std::cout << "Running Binary Search...\n";
+			searchAlgorithm = buildResultBinary;
+		}
+		else if (selection == Selection::linear) {
+			system("cls");
+			std::cout << "Running Linear Search...\n";
+			searchAlgorithm = buildResultLinear;
+		}
+
+		return searchAlgorithm;
 	}
 	
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
@@ -180,24 +249,70 @@ namespace LinkedListImpl {
 	}
 
 	void buildResultLinear(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
+		stats.review = data.reviews.getValue();
+		stats.numWords++;
 
+		/// Calculate Positive
+		// if check for 'Data' struct: builds final result
+		const std::string* pwPtr = data.positiveWords.linearSearch(word);
+		if (pwPtr != nullptr) {
+			Word posWordStruct(*pwPtr);
+			// if check for 'ReviewStats' struct: builds individual review stats
+			Word* statsWordPtr = stats.wordsPos.linearSearch(posWordStruct);
+			if (statsWordPtr == nullptr) {
+				posWordStruct.count = posWordStruct.count + 1;
+				stats.wordsPos.insertSorted(posWordStruct);
+			}
+			else {
+				statsWordPtr->count = statsWordPtr->count + 1;
+			}
+
+			//std::cout << word << "+";
+
+			stats.numPos++;
+			return;
+		}
+
+		/// Calculate Negative
+		// if check for 'Data' struct: builds final result
+		const std::string* nwPtr = data.negativeWords.linearSearch(word);
+		if (nwPtr != nullptr) {
+			Word negWordStruct(*nwPtr);
+			// if check for 'ReviewStats' struct: builds individual review stats
+			Word* statsWordPtr = stats.wordsNeg.linearSearch(negWordStruct);
+			if (statsWordPtr == nullptr) {
+				negWordStruct.count = negWordStruct.count + 1;
+				stats.wordsNeg.insertSorted(negWordStruct);
+			}
+			else {
+				statsWordPtr->count = statsWordPtr->count + 1;
+			}
+
+			//std::cout << word << "-";
+
+			stats.numNeg++;
+		}
 	}
 
 
 	void menuLoop(Result& res) {
-		const std::string menus[] = {
+		bool sortedByCount = false;
+
+		std::string menus[] = {
 			"1 - Display Positive Words",
 			"2 - Display Negative Words",
 			"3 - Iterate through ReviewStats",
 			"4 - Generate Sentiment Analysis",
+			"",
 			"0 - Exit Application"
 		};
 		const size_t size = sizeof(menus) / sizeof(menus[0]);
 
 		while (true) {
+			menus[4] = !sortedByCount ? "5 - Sort By Count" : "5 - Sort By Alphabet";
+
 			std::string s;
 
-			std::cout << std::endl;
 			for (int i = 0; i < size; i++) {
 				std::cout << menus[i] << std::endl;
 			}
@@ -205,8 +320,13 @@ namespace LinkedListImpl {
 			std::cout << ">> ";
 			std::cin >> s;
 
+			if (s == "cls") {
+				system("cls");
+				continue;
+			}
+
 			if (!isNumber(s)) {
-				std::cout << "Please enter a number.\n";
+				std::cout << "Please enter a valid input.\n";
 				continue;
 			}
 			const uint16_t val = std::stoi(s);
@@ -227,6 +347,11 @@ namespace LinkedListImpl {
 			case 4:
 				sentimentAnalysis(res);
 				break;
+
+			case 5:
+				sortWords(res);
+				break;
+
 			case 0:
 				return;
 			}
@@ -237,17 +362,31 @@ namespace LinkedListImpl {
 	/// Menus
 	void displayPositiveWords(Result& res) {
 		res.wordsPos.display();
+		std::cout << std::endl;
 	}
 
 	void displayNegativeWords(Result& res) {
 		res.wordsNeg.display();
+		std::cout << std::endl;
 	}
 
 	void iterateStats(Result& res) {
 		res.reviewStats.reset();
 		while (res.reviewStats.hasNext()) {
+			system("cls");
+			
+			std::string s;
 			res.reviewStats.getValue().log();
-			std::cin.get();
+
+			std::cout << "Press (Q) to exit loop.\n";
+			std::cout << "Press Enter to continue...\n";
+			std::getline(std::cin, s);
+
+			if (s.size() == 1 && tolower(s[0]) == 'q') {
+				res.reviewStats.reset();
+				system("cls");
+				return;
+			}
 			res.reviewStats.next();
 		}
 		res.reviewStats.reset();
@@ -307,6 +446,81 @@ namespace LinkedListImpl {
 		}
 	}
 
+	void sortWords(Result& res) {
+		system("cls");
+		bool isBubbleSort;
+		
+		std::string menus[] = {
+			"1 - Bubble Sort",
+			"2 - Quick Sort",
+			"0 - Back"
+		};
+		const size_t size = sizeof(menus) / sizeof(menus[0]);
+
+		/// Loop for menu
+		while (true) {
+			std::string s;
+			for (int i = 0; i < size; i++) {
+				std::cout << menus[i] << std::endl;
+			}
+			std::cout << ">> ";
+			std::cin >> s;
+
+			// Remove newline from input buffer
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+			if (!isNumber(s)) {
+				std::cout << "Please enter a number.\n";
+				continue;
+			}
+
+			const uint16_t val = stoi(s);
+
+			if (val == 0) {
+				system("cls");
+				return;
+			}
+
+			/// Assert Sorting Algorithm
+			if (val == 1) {
+				isBubbleSort = true;
+				break;
+			} else if (val == 2) {
+				isBubbleSort = false;
+				break;
+			}
+		}
+
+		/// Sorting
+		LinkedList<Word>* wordsPosPtr = &res.wordsPos;
+		LinkedList<Word>* wordsNegPtr = &res.wordsNeg;
+
+		if (wordsPosPtr == nullptr || wordsNegPtr == nullptr) {
+			throw std::runtime_error("[ERROR] Attempting to sort a Word struct that points to nullptr. (sortWords)");
+		}
+		
+		const auto start = Timer::now();
+		system("cls");
+		std::cout << "Sorting...\n";
+
+		if (isBubbleSort) {
+			wordsPosPtr->bubbleSort();
+			wordsNegPtr->bubbleSort();
+		} else {
+			/// TODO: Fix QuickSort
+			wordsPosPtr->quickSort();
+			wordsNegPtr->quickSort();
+		}
+
+		const auto duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
+
+		std::cout << "Operation completed in " << duration << std::endl;
+		std::cout << "\nPress any key to continue...";
+
+		std::cin.get();
+		system("cls");
+	}
+
 
 	/// Linked List Print Functions
 	void printAllSentimentScores(LinkedList<ReviewStats>& stats) {
@@ -349,7 +563,7 @@ namespace LinkedListImpl {
 	void printSelectedSentimentScore(LinkedList<ReviewStats>& stats) {
 		while (true) {
 			std::string s;
-			std::cout << "Which Review Number do you want to view?: ";
+			std::cout << "Which Review Number do you want to view? (Q to exit): ";
 
 			std::cin >> s;
 
