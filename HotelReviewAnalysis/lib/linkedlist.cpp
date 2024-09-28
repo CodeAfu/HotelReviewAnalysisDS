@@ -272,7 +272,7 @@ void LinkedList<Word>::bubbleSort() {
 
 template<typename T>
 void LinkedList<T>::quickSort() {
-	head = quickSortRecursive(head, this->getTail());
+	this->head = quickSortRecursive(this->head, this->getTail());
 }
 
 template<typename T>
@@ -353,7 +353,6 @@ void LinkedList<T>::swapNodes(Node<T>* x, Node<T>* y) {
 
 template<typename T>
 Node<T>* LinkedList<T>::quickSortRecursive(Node<T>* head, Node<T>* end) {
-	//throw std::runtime_error("Quick Sort Recursive is only compatible with the 'Word' Struct.");
 	if (head == nullptr || head == end) {
 		return head;
 	}
@@ -422,14 +421,14 @@ Node<Word>* LinkedList<Word>::partition(Node<Word>* head, Node<Word>* end, Node<
 	*newEnd = nullptr;
 
 	while (current != pivot) {
-		if (current->value < pivot->value) {
+		if (current->value.count < pivot->value.count) {
 			if (*newHead == nullptr) {
 				*newHead = current;
 			}
 			prev = current;
 			current = current->next;
 		} else {
-			if (prev != nullptr) {
+			if (prev) {
 				prev->next = current->next;
 			}
 			Node<Word>* temp = current->next;
@@ -466,9 +465,8 @@ Node<T>* LinkedList<T>::concatenate(Node<T>* left, Node<T>* pivot, Node<T>* righ
 	return result;
 }
 
-
 template<typename T>
-Node<T>* LinkedList<T>::getTailNode(Node<T>* node) {
+Node<T>* LinkedList<T>::getTailNode(Node<T>* node)	{
 	while (node != nullptr && node->next != nullptr) {
 		node = node->next;
 	}

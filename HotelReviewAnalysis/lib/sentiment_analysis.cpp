@@ -83,7 +83,7 @@ namespace LinkedListImpl {
 	}
 
 	Result analyze(const Data& data) {
-		const int DEBUG_LIMIT = 200; // set to -1 for real use
+		const int DEBUG_LIMIT = 2000; // set to -1 for real use
 		int iterations = 0;
 		Result res;
 
@@ -303,13 +303,13 @@ namespace LinkedListImpl {
 			"2 - Display Negative Words",
 			"3 - Iterate through ReviewStats",
 			"4 - Generate Sentiment Analysis",
-			"",
+			"5 - Sort Words by Count",
 			"0 - Exit Application"
 		};
 		const size_t size = sizeof(menus) / sizeof(menus[0]);
 
 		while (true) {
-			menus[4] = !sortedByCount ? "5 - Sort By Count" : "5 - Sort By Alphabet";
+			//menus[4] = !sortedByCount ? "5 - Sort Result By Count" : "5 - Sort Result By Alphabet";
 
 			std::string s;
 
