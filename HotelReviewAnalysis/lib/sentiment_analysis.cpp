@@ -6,6 +6,7 @@
 #include <functional>
 #include <iomanip>
 #include <ios>
+#include <thread>
 
 #include "cleaner.h"
 #include "review.h"
@@ -97,6 +98,8 @@ namespace LinkedListImpl {
 
 		const std::function<void(const std::string, const Data&, Result&, ReviewStats&)> searchAlgorithm = getAlgorithm();
 		
+		const std::string delimiters = " ,.-/";
+
 		/// Process Reviews
 		const auto start = Timer::now();
 		
@@ -104,7 +107,7 @@ namespace LinkedListImpl {
 			const auto reviewTimer = Timer::now();
 
 			ReviewStats stats;
-			std::cout << "\rReview #" << iterations + 1 << std::flush;
+			//std::cout << "\rReview #" << iterations + 1 << std::flush;
 
 			/// Split string and build review
 			std::istringstream iss(data.reviews.getValue().comment);
@@ -112,9 +115,11 @@ namespace LinkedListImpl {
 
 			/// Get each word in comment
 			while (std::getline(iss, s, ' ')) {
-				//std::cout << "[Before: " << std::setw(30) << s;
+				std::cout << "[Before: " << std::setw(30) << s;
 				cleanWord(s);
-				//std::cout << " | After: " << std::setw(30) << s << "]\n";
+				std::cout << " | After: " << std::setw(30) << s << "]\n";
+				using namespace std::chrono_literals;
+				std::this_thread::sleep_for(1ms);
 				searchAlgorithm(s, data, res, stats);
 			}
 
