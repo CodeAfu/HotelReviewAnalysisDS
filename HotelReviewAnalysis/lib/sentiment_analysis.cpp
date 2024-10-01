@@ -43,7 +43,7 @@ namespace LinkedListImpl {
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
 	void buildResultLinear(const std::string& word, const Data& data, Result& res, ReviewStats& stats);
 
-	void menuLoop(Result& res);
+	void menuLoop(Result& res, bool& runFlag);
 	void displayPositiveWords(Result& res);
 	void displayNegativeWords(Result& res);
 	void iterateStats(Result& res);
@@ -74,16 +74,23 @@ namespace LinkedListImpl {
 		std::system("cls");
 		res.log();
 
-		/// Debug
-
-
-		/// Prompts
+		/// Menu
+		bool runFlag = true;
 		std::cout << std::endl;
-		menuLoop(res);
+		menuLoop(res, runFlag);
+
+		/// Rerun Menu
+		while (runFlag) {
+			res = analyze(data);
+			std::system("cls");
+			res.log();
+			std::cout << std::endl;
+			menuLoop(res, runFlag);
+		}
 	}
 
 	Result analyze(const Data& data) {
-		const int DEBUG_LIMIT = -1; // set to -1 for real use
+		const int DEBUG_LIMIT = 300; // set to -1 for real use
 		int iterations = 0;
 		Result res;
 
@@ -295,22 +302,22 @@ namespace LinkedListImpl {
 	}
 
 
-	void menuLoop(Result& res) {
+	void menuLoop(Result& res, bool& runFlag) {
+		runFlag = false; // For menu 6
 		bool sortedByCount = false;
 
 		std::string menus[] = {
 			"1 - Display Positive Words",
 			"2 - Display Negative Words",
-			"3 - Iterate through ReviewStats",
-			"4 - Generate Sentiment Analysis",
-			"5 - Sort Words by Count",
+			"3 - Generate Sentiment Analysis",
+			"4 - Sort Words by Count",
+			"5 - Print Summary of Search",
+			"6 - Change Search Algorithm",
 			"0 - Exit Application"
 		};
 		const size_t size = sizeof(menus) / sizeof(menus[0]);
 
 		while (true) {
-			//menus[4] = !sortedByCount ? "5 - Sort Result By Count" : "5 - Sort Result By Alphabet";
-
 			std::string s;
 
 			for (int i = 0; i < size; i++) {
@@ -341,16 +348,22 @@ namespace LinkedListImpl {
 				break;
 
 			case 3:
-				iterateStats(res);
-				break;
-
-			case 4:
 				sentimentAnalysis(res);
 				break;
 
-			case 5:
+			case 4:
 				sortWords(res);
 				break;
+
+			case 5:
+				system("cls");
+				res.log();
+				std::cout << std::endl;
+				break;
+
+			case 6:
+				runFlag = true;
+				return;
 
 			case 0:
 				return;
