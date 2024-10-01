@@ -4,9 +4,10 @@
 #include <algorithm>
 #include <chrono>
 #include <functional>
+#include <iomanip>
 #include <ios>
-#include <regex>
 
+#include "cleaner.h"
 #include "review.h"
 #include "linkedlist.h"
 #include "csv_reader.h"
@@ -56,7 +57,6 @@ namespace LinkedListImpl {
 	void printSelectedSentimentScore(LinkedList<ReviewStats>& stats);
 
 	bool isNumber(const std::string& s);
-	void processWord(std::string& word);
 
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile) {
 		/// Load File Data
@@ -91,7 +91,7 @@ namespace LinkedListImpl {
 	}
 
 	Result analyze(const Data& data) {
-		const int DEBUG_LIMIT = 300; // set to -1 for real use
+		const int DEBUG_LIMIT = -1; // set to -1 for real use
 		int iterations = 0;
 		Result res;
 
@@ -112,7 +112,9 @@ namespace LinkedListImpl {
 
 			/// Get each word in comment
 			while (std::getline(iss, s, ' ')) {
-				processWord(s);
+				//std::cout << "[Before: " << std::setw(30) << s;
+				cleanWord(s);
+				//std::cout << " | After: " << std::setw(30) << s << "]\n";
 				searchAlgorithm(s, data, res, stats);
 			}
 
@@ -207,6 +209,10 @@ namespace LinkedListImpl {
 	}
 	
 	void buildResultBinary(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
+		if (word.empty()) {
+			return;
+		}
+
 		stats.review = data.reviews.getValue();
 		stats.numWords++;
 
@@ -642,22 +648,9 @@ namespace LinkedListImpl {
 		}
 	}
 
-
 	/// Helper Functions
 	bool isNumber(const std::string& s) {
 		return !s.empty() && std::find_if(s.begin(),
 			s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
-	}
-
-
-	void processWord(std::string& word) {
-		const char excludeChars[] = { ',', '\"', '\'', '.', '/', ':', ';', '!', '?' };
-		const size_t n = sizeof(excludeChars) / sizeof(char);
-
-		std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-
-		word.erase(std::remove_if(word.begin(), word.end(), [&](char c) {
-			return std::find(excludeChars, excludeChars + n, c) != excludeChars + n;
-			}), word.end());
 	}
 }

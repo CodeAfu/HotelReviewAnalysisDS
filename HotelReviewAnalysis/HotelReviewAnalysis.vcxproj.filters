@@ -36,6 +36,9 @@
     <ClCompile Include="lib\result.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\cleaner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\csv_reader.h">
@@ -62,5 +65,11 @@
     <ClInclude Include="include\result.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cleaner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
