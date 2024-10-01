@@ -378,33 +378,6 @@ Node<T>* LinkedList<T>::quickSortRecursive(Node<T>* head, Node<T>* end) {
 	return newHead;
 }
 
-//template<>
-//Node<Word>* LinkedList<Word>::quickSortRecursive(Node<Word>* head, Node<Word>* end) {
-//	if (head == nullptr || head == end) {
-//		return head;
-//	}
-//
-//	Node<Word>* newHead = nullptr;
-//	Node<Word>* newEnd = nullptr;
-//	
-//	Node<Word>* pivot = partition(head, end, &newHead, &newEnd);
-//
-//	if (newHead != pivot) {
-//		Node<Word>* temp = newHead;
-//		while (temp->next != pivot) {
-//			temp = temp->next;
-//		}
-//		temp->next = nullptr;
-//		newHead = quickSortRecursive(newHead, temp);
-//		temp = getTailNode(newHead);
-//		temp->next = pivot;
-//	}
-//
-//	pivot->next = quickSortRecursive(pivot->next, newEnd);
-//
-//	return newHead;
-//}
-
 template<typename T>
 Node<T>* LinkedList<T>::partition(Node<T>* head, Node<T>* end, Node<T>** newHead, Node<T>** newEnd) {
 	throw std::runtime_error("Quick Sort is only compatible with with the 'Word' struct.");

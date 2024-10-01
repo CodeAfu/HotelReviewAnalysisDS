@@ -83,7 +83,7 @@ namespace LinkedListImpl {
 	}
 
 	Result analyze(const Data& data) {
-		const int DEBUG_LIMIT = 2000; // set to -1 for real use
+		const int DEBUG_LIMIT = -1; // set to -1 for real use
 		int iterations = 0;
 		Result res;
 
@@ -507,12 +507,11 @@ namespace LinkedListImpl {
 			wordsPosPtr->bubbleSort();
 			wordsNegPtr->bubbleSort();
 		} else {
-			/// TODO: Fix QuickSort
 			wordsPosPtr->quickSort();
 			wordsNegPtr->quickSort();
 		}
 
-		const auto duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
+		const auto duration = std::chrono::duration_cast<Mu>(Timer::now() - start);
 
 		std::cout << "Operation completed in " << duration << std::endl;
 		std::cout << "\nPress any key to continue...";
