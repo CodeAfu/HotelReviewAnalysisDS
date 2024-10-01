@@ -2,10 +2,10 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
-#include <format>
 #include <chrono>
 #include <functional>
 #include <ios>
+#include <regex>
 
 #include "review.h"
 #include "linkedlist.h"
@@ -104,12 +104,7 @@ namespace LinkedListImpl {
 			const auto reviewTimer = Timer::now();
 
 			ReviewStats stats;
-			//std::system("cls");
 			std::cout << "\rReview #" << iterations + 1 << std::flush;
-
-			//std::cout << "Review: " << data.reviews.getValue().comment << std::endl;
-			//std::cout << "Rating: " << data.reviews.getValue().rating << std::endl;
-			//std::cin.get();
 
 			/// Split string and build review
 			std::istringstream iss(data.reviews.getValue().comment);
@@ -607,6 +602,8 @@ namespace LinkedListImpl {
 	}
 
 	void printSelectedSentimentScore(LinkedList<ReviewStats>& stats) {
+		system("cls");
+
 		while (true) {
 			std::string s;
 			std::cout << "Which Review Number do you want to view? (Q to exit): ";
@@ -625,12 +622,20 @@ namespace LinkedListImpl {
 
 			const size_t val = std::stoi(s);
 
+			if (val > stats.getSize()) {
+				std::cout << "Index out of range [" << val << ":" << stats.getSize() << "].\n";
+				continue;
+			}
+
 			for (int i = 1; i < val; i++) {
 				if (!stats.hasNext()) {
 					throw std::out_of_range("[ERROR] LinkedList next pointer points to a nullptr.");
 				}
 				stats.next();
 			}
+
+			system("cls");
+
 			stats.getValue().log();
 			std::cout << std::endl;
 			stats.reset();
