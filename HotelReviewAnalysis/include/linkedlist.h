@@ -33,6 +33,7 @@ public:
 	T* binarySearch(const T& value);
 	void bubbleSort();
 	void quickSort();
+	void sort();
 
 	// Print
 	void display();

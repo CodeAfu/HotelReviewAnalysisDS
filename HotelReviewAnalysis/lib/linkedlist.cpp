@@ -276,6 +276,31 @@ void LinkedList<T>::quickSort() {
 }
 
 template<typename T>
+void LinkedList<T>::sort() {
+	if (head == nullptr) {
+		return;
+	}
+
+	bool swapped;
+	Node<T>* current = head;
+	Node<T>* lastSorted = nullptr;
+
+	do {
+		swapped = false;
+		current = head;
+
+		while (current->next != lastSorted) {
+			if (current->next->value < current->value) {
+				swapValues(current, current->next);
+				swapped = true;
+			}
+			current = current->next;
+		}
+		lastSorted = current;
+	} while (swapped);
+}
+
+template<typename T>
 void LinkedList<T>::display() {
 	if (!head) {
 		std::cout << "LinkedList not initialized\n";

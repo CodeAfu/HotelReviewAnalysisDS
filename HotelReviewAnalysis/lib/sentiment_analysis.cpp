@@ -48,7 +48,8 @@ namespace LinkedListImpl {
 	void displayNegativeWords(Result& res);
 	void iterateStats(Result& res);
 	void sentimentAnalysis(Result& res);
-	void sortWords(Result& res);
+	void sortWordsByAlpabet(Result& res);
+	void sortWordsByCount(Result& res, bool& sortedByCount);
 
 	void printAllSentimentScores(LinkedList<ReviewStats>& stats);
 	void printIterateSentimentScores(LinkedList<ReviewStats>& stats);
@@ -274,8 +275,6 @@ namespace LinkedListImpl {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
 
-			//std::cout << word << "+";
-
 			stats.numPos++;
 			return;
 		}
@@ -294,8 +293,6 @@ namespace LinkedListImpl {
 			else {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
-
-			//std::cout << word << "-";
 
 			stats.numNeg++;
 		}
@@ -352,7 +349,7 @@ namespace LinkedListImpl {
 				break;
 
 			case 4:
-				sortWords(res);
+				sortWordsByCount(res, sortedByCount);
 				break;
 
 			case 5:
@@ -373,14 +370,21 @@ namespace LinkedListImpl {
 
 
 	/// Menus
+	void handleDisplay(LinkedList<Word>& words) {
+		system("cls");
+		words.display();
+		std::cout << "\nPress Enter to continue...\n";
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
+		std::cin.get();
+		system("cls");
+	}
+
 	void displayPositiveWords(Result& res) {
-		res.wordsPos.display();
-		std::cout << std::endl;
+		handleDisplay(res.wordsPos);
 	}
 
 	void displayNegativeWords(Result& res) {
-		res.wordsNeg.display();
-		std::cout << std::endl;
+		handleDisplay(res.wordsNeg);
 	}
 
 	void iterateStats(Result& res) {
@@ -459,7 +463,22 @@ namespace LinkedListImpl {
 		}
 	}
 
-	void sortWords(Result& res) {
+	void sortWordsByAlpabet(Result& res) {
+		/// TODO: POSSIBLE UNNECESSARY NULL CHECK
+		if (&res.wordsPos != nullptr) {
+			res.wordsPos.sort();
+		} else {
+			std::cout << "Positive Words List is null.\n";
+		}
+
+		if (&res.wordsNeg != nullptr) {
+			res.wordsNeg.sort();
+		} else {
+			std::cout << "Negative Words List is null.\n";
+		}
+	}
+
+	void sortWordsByCount(Result& res, bool& sortedByCount) {
 		system("cls");
 		bool isBubbleSort;
 		
@@ -504,12 +523,25 @@ namespace LinkedListImpl {
 			}
 		}
 
+		/// Unsort if already sorted
+		if (sortedByCount) {
+			const auto start = Timer::now();
+			std::cout << "Words are already sorted by Word Count.\n";
+			std::cout << "Sorting by Alphabet...\n";
+
+			sortWordsByAlpabet(res);
+			sortedByCount = false; // Not needed but stays true to the context.
+
+			const auto duration = std::chrono::duration_cast<Mu>(Timer::now() - start);
+			std::cout << "Sorting Completed. (" << duration << ").\n";
+		}
+
 		/// Sorting
 		LinkedList<Word>* wordsPosPtr = &res.wordsPos;
 		LinkedList<Word>* wordsNegPtr = &res.wordsNeg;
 
 		if (wordsPosPtr == nullptr || wordsNegPtr == nullptr) {
-			throw std::runtime_error("[ERROR] Attempting to sort a Word struct that points to nullptr. (sortWords)");
+			throw std::runtime_error("[ERROR] Attempting to sort a Word struct that points to nullptr. (sortWordsByCount)");
 		}
 		
 		const auto start = Timer::now();
@@ -519,9 +551,11 @@ namespace LinkedListImpl {
 		if (isBubbleSort) {
 			wordsPosPtr->bubbleSort();
 			wordsNegPtr->bubbleSort();
+			sortedByCount = true;
 		} else {
 			wordsPosPtr->quickSort();
 			wordsNegPtr->quickSort();
+			sortedByCount = true;
 		}
 
 		const auto duration = std::chrono::duration_cast<Mu>(Timer::now() - start);
