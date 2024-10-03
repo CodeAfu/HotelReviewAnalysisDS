@@ -92,7 +92,7 @@ namespace LinkedListImpl {
 	}
 
 	Result analyze(const Data& data) {
-		const int DEBUG_LIMIT = -1; // set to -1 for real use
+		const int DEBUG_LIMIT = 500; // set to -1 for real use
 		int iterations = 0;
 		Result res;
 
@@ -107,7 +107,7 @@ namespace LinkedListImpl {
 			const auto reviewTimer = Timer::now();
 
 			ReviewStats stats;
-			//std::cout << "\rReview #" << iterations + 1 << std::flush;
+			std::cout << "\rReview #" << iterations + 1 << std::flush;
 
 			/// Split string and build review
 			std::istringstream iss(data.reviews.getValue().comment);
@@ -115,11 +115,11 @@ namespace LinkedListImpl {
 
 			/// Get each word in comment
 			while (std::getline(iss, s, ' ')) {
-				std::cout << "[Before: " << std::setw(30) << s;
+				//std::cout << "[Before: " << std::setw(30) << s;
 				cleanWord(s);
-				std::cout << " | After: " << std::setw(30) << s << "]\n";
-				using namespace std::chrono_literals;
-				std::this_thread::sleep_for(1ms);
+				//std::cout << " | After: " << std::setw(30) << s << "]\n";
+				//using namespace std::chrono_literals;
+				//std::this_thread::sleep_for(1ms);
 				searchAlgorithm(s, data, res, stats);
 			}
 
@@ -236,8 +236,6 @@ namespace LinkedListImpl {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
 
-			//std::cout << word << "+";
-
 			stats.numPos++;
 			return;
 		}
@@ -256,13 +254,15 @@ namespace LinkedListImpl {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
 
-			//std::cout << word << "-";
-
 			stats.numNeg++;
 		}
 	}
 
 	void buildResultLinear(const std::string& word, const Data& data, Result& res, ReviewStats& stats) {
+		if (word.empty()) {
+			return;
+		}
+
 		stats.review = data.reviews.getValue();
 		stats.numWords++;
 
@@ -470,7 +470,7 @@ namespace LinkedListImpl {
 	}
 
 	void sortWordsByAlpabet(Result& res) {
-		/// TODO: POSSIBLE UNNECESSARY NULL CHECK
+		/// POSSIBLE UNNECESSARY NULL CHECK
 		if (&res.wordsPos != nullptr) {
 			res.wordsPos.sort();
 		} else {
@@ -531,15 +531,12 @@ namespace LinkedListImpl {
 
 		/// Unsort if already sorted
 		if (sortedByCount) {
-			const auto start = Timer::now();
+			system("cls");
 			std::cout << "Words are already sorted by Word Count.\n";
 			std::cout << "Sorting by Alphabet...\n";
 
 			sortWordsByAlpabet(res);
 			sortedByCount = false; // Not needed but stays true to the context.
-
-			const auto duration = std::chrono::duration_cast<Mu>(Timer::now() - start);
-			std::cout << "Sorting Completed. (" << duration << ").\n";
 		}
 
 		/// Sorting

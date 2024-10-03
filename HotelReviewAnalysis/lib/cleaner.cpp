@@ -29,7 +29,7 @@ inline void rtrim(std::string& s) {
 }
 
 void processWord(std::string& word) {
-	const char excludeChars[] = { ',', '\"', '\'', '.', '/', ':', ';', '!', '?' };
+	const char excludeChars[] = { ',', '\"', '\'', '.', '/', ':', ';', '!', '?', '*' };
 	const size_t n = sizeof(excludeChars) / sizeof(char);
 
 	std::transform(word.begin(), word.end(), word.begin(), ::tolower);
