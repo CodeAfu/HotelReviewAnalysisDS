@@ -7,6 +7,8 @@
 /// </summary>
 struct Result {
 	LinkedList<ReviewStats> reviewStats; // Information about each review, iterate through each to get details
+	LinkedList<std::string> wordsPosRaw;
+	LinkedList<std::string> wordsNegRaw;
 	LinkedList<Word> wordsPos;
 	LinkedList<Word> wordsNeg;
 	unsigned int numReviews = 0;

@@ -4,9 +4,9 @@
 #include <format>
 
 #include "linkedlist.h"
-#include "csv_reader.h"
+#include "file_reader.h"
 
-namespace csvreader {
+namespace filereader {
 
 	std::string asString(const std::string& fileName) {
 		std::string contents = "";

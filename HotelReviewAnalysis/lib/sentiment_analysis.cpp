@@ -11,7 +11,7 @@
 #include "cleaner.h"
 #include "review.h"
 #include "linkedlist.h"
-#include "csv_reader.h"
+#include "file_reader.h"
 #include "review_stats.h"
 #include "word.h"
 #include "result.h"
@@ -39,6 +39,7 @@ struct Data {
 namespace LinkedListImpl {
 
 	Result analyze(const Data& data);
+	void processResult(Result& res);
 
 	std::function<void(const std::string, const Data&, Result&, ReviewStats&)> getAlgorithm();
 
@@ -61,16 +62,18 @@ namespace LinkedListImpl {
 
 	void run(const std::string& revFile, const std::string& posFile, const std::string negFile) {
 		/// Load File Data
-		LinkedList<Review> reviews = csvreader::asLLReview(revFile);
-		LinkedList<std::string> positiveWords = csvreader::asLLString(posFile);
-		LinkedList<std::string> negativeWords = csvreader::asLLString(negFile);
+		LinkedList<Review> reviews = filereader::asLLReview(revFile);
+		LinkedList<std::string> positiveWords = filereader::asLLString(posFile);
+		LinkedList<std::string> negativeWords = filereader::asLLString(negFile);
 		Data data(reviews, positiveWords, negativeWords);
 
-		//std::cin.get();
 		std::system("cls");
 		
-		/// Main Analysis runs here
+		/// Run Semantic Analysis
 		Result res = analyze(data);
+
+		/// Run Word Count Organization
+
 		
 		/// Prints final result details
 		std::system("cls");
@@ -92,7 +95,7 @@ namespace LinkedListImpl {
 	}
 
 	Result analyze(const Data& data) {
-		const int DEBUG_LIMIT = 500; // set to -1 for real use
+		const int DEBUG_LIMIT = -1; // set to -1 for real use
 		int iterations = 0;
 		Result res;
 
@@ -115,11 +118,7 @@ namespace LinkedListImpl {
 
 			/// Get each word in comment
 			while (std::getline(iss, s, ' ')) {
-				//std::cout << "[Before: " << std::setw(30) << s;
 				cleanWord(s);
-				//std::cout << " | After: " << std::setw(30) << s << "]\n";
-				//using namespace std::chrono_literals;
-				//std::this_thread::sleep_for(1ms);
 				searchAlgorithm(s, data, res, stats);
 			}
 
@@ -136,21 +135,23 @@ namespace LinkedListImpl {
 				break;
 			}
 
-			//std::cin.get();
-			
 			/// Break Loop
 			if (!data.reviews.hasNext()) {
 				break;
 			}
 			data.reviews.next();
 
-			stats.timeInMillis = std::chrono::duration_cast<Mu>(Timer::now() - start);
+			stats.timeInMicroseconds = std::chrono::duration_cast<Mu>(Timer::now() - reviewTimer);
 		}
 
 		res.duration = std::chrono::duration_cast<Ms>(Timer::now() - start);
 
 		data.reviews.reset(); // Reset current pointer to head
 		return res;
+	}
+
+	void processResult(Result& res) {
+
 	}
 
 	std::function<void(const std::string, const Data&, Result&, ReviewStats&)> getAlgorithm() {
@@ -201,12 +202,12 @@ namespace LinkedListImpl {
 
 		if (selection == Selection::binary) {
 			system("cls");
-			std::cout << "Running Binary Search...\n";
+			std::cout << "Running Semantic Analysis Using Binary Search...\n";
 			searchAlgorithm = buildResultBinary;
 		}
 		else if (selection == Selection::linear) {
 			system("cls");
-			std::cout << "Running Linear Search...\n";
+			std::cout << "Running Semantic Analysis Using Linear Search...\n";
 			searchAlgorithm = buildResultLinear;
 		}
 
@@ -280,7 +281,6 @@ namespace LinkedListImpl {
 			else {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
-
 			stats.numPos++;
 			return;
 		}
@@ -299,7 +299,6 @@ namespace LinkedListImpl {
 			else {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
-
 			stats.numNeg++;
 		}
 	}

@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lib\csv_reader.cpp">
+    <ClCompile Include="lib\file_reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="lib\linkedlist.cpp">
@@ -41,7 +41,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\csv_reader.h">
+    <ClInclude Include="include\file_reader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\linkedlist.h">

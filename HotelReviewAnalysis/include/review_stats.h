@@ -15,7 +15,7 @@ struct ReviewStats {
 	unsigned int numPos = 0;
 	unsigned int numNeg = 0;
 	unsigned int numWords = 0;
-	std::chrono::microseconds timeInMillis;
+	std::chrono::microseconds timeInMicroseconds;
 	int rawSentimentScore;
 
 	void calculateSentimentScore();

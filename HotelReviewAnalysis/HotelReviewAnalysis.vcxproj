@@ -21,7 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\cleaner.cpp" />
-    <ClCompile Include="lib\csv_reader.cpp" />
+    <ClCompile Include="lib\file_reader.cpp" />
     <ClCompile Include="lib\linkedlist.cpp" />
     <ClCompile Include="lib\result.cpp" />
     <ClCompile Include="lib\review.cpp" />
@@ -31,7 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cleaner.h" />
-    <ClInclude Include="include\csv_reader.h" />
+    <ClInclude Include="include\file_reader.h" />
     <ClInclude Include="include\linkedlist.h" />
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\result.h" />

@@ -419,13 +419,18 @@ Node<Word>* LinkedList<Word>::partition(Node<Word>* head, Node<Word>* end, Node<
 	*newEnd = nullptr;
 
 	while (current != pivot) {
-		if (current->value.count < pivot->value.count) {
+		// Primary sorting by count, secondary sorting by alphabetical order when counts are equal
+		if (current->value.count < pivot->value.count ||
+			(current->value.count == pivot->value.count && current->value.word < pivot->value.word)) {
+			// Place current node in the sorted portion
 			if (*newHead == nullptr) {
 				*newHead = current;
 			}
 			prev = current;
 			current = current->next;
-		} else {
+		}
+		else {
+			// Place current node in the unsorted portion
 			if (prev) {
 				prev->next = current->next;
 			}
@@ -440,12 +445,11 @@ Node<Word>* LinkedList<Word>::partition(Node<Word>* head, Node<Word>* end, Node<
 	if (*newHead == nullptr) {
 		*newHead = pivot;
 	}
-	
+
 	*newEnd = tail;
-	
+
 	return pivot;
 }
-
 
 template<typename T>
 Node<T>* LinkedList<T>::concatenate(Node<T>* left, Node<T>* pivot, Node<T>* right) {
