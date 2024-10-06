@@ -228,8 +228,7 @@ T* LinkedList<T>::binarySearch(const T& value) {
 
 		if (mid->value == value) {
 			return &(mid->value);
-		}
-		else if (mid->value < value) {
+		} else if (mid->value < value) {
 			start = mid->next;
 		} else {
 			end = mid;
@@ -243,8 +242,6 @@ void LinkedList<T>::bubbleSort() {
 	throw std::runtime_error("Sorting algorithms are only compatible with the 'Word' struct.");
 }
 
-
-/// TODO: Test.
 template<>
 void LinkedList<Word>::bubbleSort() {
 	if (head == nullptr) {

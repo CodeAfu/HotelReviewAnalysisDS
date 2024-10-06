@@ -72,9 +72,6 @@ namespace LinkedListImpl {
 		/// Run Semantic Analysis
 		Result res = analyze(data);
 
-		/// Run Word Count Organization
-
-		
 		/// Prints final result details
 		std::system("cls");
 		res.log();
@@ -101,8 +98,6 @@ namespace LinkedListImpl {
 
 		const std::function<void(const std::string, const Data&, Result&, ReviewStats&)> searchAlgorithm = getAlgorithm();
 		
-		const std::string delimiters = " ,.-/";
-
 		/// Process Reviews
 		const auto start = Timer::now();
 		

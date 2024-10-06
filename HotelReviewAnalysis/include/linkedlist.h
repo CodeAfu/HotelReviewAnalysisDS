@@ -29,6 +29,7 @@ public:
 	void next();
 	void reset();
 
+	// Algorithms
 	T* linearSearch(const T& value);
 	T* binarySearch(const T& value);
 	void bubbleSort();
