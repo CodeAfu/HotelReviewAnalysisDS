@@ -18,7 +18,7 @@ struct Word {
 	}
 
 	Word& operator+=(const Word& rhs) {
-		this->word += rhs.word;
+		this->word += rhs.word; // Should this be here???
 		this->count += rhs.count;
 		return *this;
 	}

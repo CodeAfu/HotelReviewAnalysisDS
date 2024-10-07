@@ -28,7 +28,7 @@ void ReviewStats::calculateSentimentScore() {
 	}
 
 	const double normalizedScore = static_cast<double>(rawSentiment) / maxRawScore;
-	this->rawSentimentScore = static_cast<int>(3 + 2 * normalizedScore	);
+	this->rawSentimentScore = static_cast<int>(3 + 2 * normalizedScore);
 }
 
 void ReviewStats::log() {
@@ -44,4 +44,3 @@ void ReviewStats::log() {
 	std::cout << "Time Taken to Calculate: " << timeInMicroseconds << std::endl;
 }
 
-template class LinkedList<std::string>;

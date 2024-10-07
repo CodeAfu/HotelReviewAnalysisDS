@@ -64,12 +64,14 @@ void LinkedList<T>::insertAtBeginning(const T& val) {
 	Node<T>* n = new Node<T>();
 	n->value = val;
 	n->next = head;
+
+	if (!head) {
+		tail = n;
+		current = n;
+	}
+
 	head = n;
 
-	if (!current) {
-		current = n;
-		tail = n;
-	}
 	size++;
 }
 

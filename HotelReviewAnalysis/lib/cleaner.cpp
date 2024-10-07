@@ -9,7 +9,6 @@ inline void ltrim(std::string& s);
 inline void rtrim(std::string & s);
 void processWord(std::string& word);
 
-
 void cleanWord(std::string& word) {
     processWord(word);
     ltrim(word);

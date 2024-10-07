@@ -43,7 +43,6 @@ private:
 	Node<T>* head;
 	Node<T>* current;
 	Node<T>* tail;
-
 	uint32_t size;
 	
 private:
