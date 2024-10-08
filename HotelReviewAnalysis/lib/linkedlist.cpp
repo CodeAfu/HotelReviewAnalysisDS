@@ -71,7 +71,6 @@ void LinkedList<T>::insertAtBeginning(const T& val) {
 	}
 
 	head = n;
-
 	size++;
 }
 
