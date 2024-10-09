@@ -6,7 +6,6 @@
 #include <functional>
 #include <iomanip>
 #include <ios>
-#include <thread>
 
 #include "cleaner.h"
 #include "review.h"
@@ -39,7 +38,6 @@ struct Data {
 namespace LinkedListImpl {
 
 	Result analyze(const Data& data);
-	void processResult(Result& res);
 
 	std::function<void(const std::string, const Data&, Result&, ReviewStats&)> getAlgorithm();
 
@@ -96,7 +94,8 @@ namespace LinkedListImpl {
 		int iterations = 0;
 		Result res;
 
-		const std::function<void(const std::string, const Data&, Result&, ReviewStats&)> searchAlgorithm = getAlgorithm();
+		const std::function<void(const std::string, const Data&, Result&, ReviewStats&)> 
+			searchAlgorithm = getAlgorithm();
 		
 		/// Process Reviews
 		const auto start = Timer::now();
@@ -143,10 +142,6 @@ namespace LinkedListImpl {
 
 		data.reviews.reset(); // Reset current pointer to head
 		return res;
-	}
-
-	void processResult(Result& res) {
-
 	}
 
 	std::function<void(const std::string, const Data&, Result&, ReviewStats&)> getAlgorithm() {

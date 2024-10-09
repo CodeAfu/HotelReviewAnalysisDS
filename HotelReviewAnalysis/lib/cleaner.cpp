@@ -37,3 +37,4 @@ void processWord(std::string& word) {
 		return std::find(excludeChars, excludeChars + n, c) != excludeChars + n;
 		}), word.end());
 }
+

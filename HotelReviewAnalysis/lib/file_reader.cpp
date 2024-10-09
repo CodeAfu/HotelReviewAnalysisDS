@@ -8,26 +8,6 @@
 
 namespace filereader {
 
-	std::string asString(const std::string& fileName) {
-		std::string contents = "";
-		std::string line;
-		std::ifstream myFile(fileName);
-
-		if (!myFile.is_open()) {
-			std::cerr << "Unable to open file.\n";
-			return contents;
-		}
-
-		while (getline(myFile, line)) {
-			contents += line + "\n";
-		}
-
-		std::cout << std::format("File Read Succesully: {}\n", fileName);
-		myFile.close();
-
-		return contents;
-	}
-
 	LinkedList<std::string> asLLString(const std::string& fileName) {
 		LinkedList<std::string> ll;
 		std::string line;
