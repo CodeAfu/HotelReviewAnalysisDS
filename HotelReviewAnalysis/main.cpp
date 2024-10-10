@@ -8,11 +8,10 @@ constexpr char POSITIVE_WORDS_FILE[] = "data/positive-words.txt";
 constexpr char REVIEWS_FILE[] = "data/tripadvisor_hotel_reviews.csv";
 
 int main(int argc, char** argv) {
+	std::cout << "PATH: " << argv[0] << std::flush;
 	std::string revFile;
 	std::string posFile;
 	std::string negFile;
-	
-	std::cout << "PATH: " << argv[0] << std::flush;
 
 	switch (argc) {
 		case 1:

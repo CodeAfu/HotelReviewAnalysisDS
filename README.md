@@ -7,7 +7,7 @@
 ```ps1
 cd HotelReviewAnalysis
 ```
-2- Try one of these:
+Try one of these:
 ```ps1
 run
 run.bat
