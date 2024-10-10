@@ -180,8 +180,7 @@ namespace LinkedListImpl {
 			if (num == 1) {
 				selection = Selection::binary;
 				break;
-			}
-			else if (num == 2) {
+			} else if (num == 2) {
 				selection = Selection::linear;
 				break;
 			}
@@ -194,8 +193,7 @@ namespace LinkedListImpl {
 			system("cls");
 			std::cout << "Running Semantic Analysis Using Binary Search...\n";
 			searchAlgorithm = buildResultBinary;
-		}
-		else if (selection == Selection::linear) {
+		} else if (selection == Selection::linear) {
 			system("cls");
 			std::cout << "Running Semantic Analysis Using Linear Search...\n";
 			searchAlgorithm = buildResultLinear;
@@ -222,8 +220,7 @@ namespace LinkedListImpl {
 			if (statsWordPtr == nullptr) {
 				posWordStruct.count = posWordStruct.count + 1;
 				stats.wordsPos.insertSorted(posWordStruct);
-			}
-			else {
+			} else {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
 
@@ -267,8 +264,7 @@ namespace LinkedListImpl {
 			if (statsWordPtr == nullptr) {
 				posWordStruct.count = posWordStruct.count + 1;
 				stats.wordsPos.insertSorted(posWordStruct);
-			}
-			else {
+			} else {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
 			stats.numPos++;
@@ -285,8 +281,7 @@ namespace LinkedListImpl {
 			if (statsWordPtr == nullptr) {
 				negWordStruct.count = negWordStruct.count + 1;
 				stats.wordsNeg.insertSorted(negWordStruct);
-			}
-			else {
+			} else {
 				statsWordPtr->count = statsWordPtr->count + 1;
 			}
 			stats.numNeg++;
@@ -552,7 +547,7 @@ namespace LinkedListImpl {
 
 		const auto duration = std::chrono::duration_cast<Mu>(Timer::now() - start);
 
-		std::cout << "Operation completed in " << duration << std::endl;
+		std::cout << "Operation completed in " << duration.count() << "ms" << std::endl;
 		std::cout << "\nPress any key to continue...";
 
 		std::cin.get();

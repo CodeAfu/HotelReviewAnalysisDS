@@ -1,8 +1,8 @@
 #include <iostream>
 #include <functional>
 
-#include "linkedlist.h";
-#include "review.h";
+#include "linkedlist.h"
+#include "review.h"
 #include "review_stats.h"
 #include "result.h"
 #include "word.h"

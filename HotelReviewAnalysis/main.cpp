@@ -1,4 +1,4 @@
-#include <iostream>;
+#include <iostream>
 #include "sentiment_analysis.h"
 
 #define LOG(x) std::cout << x << std::endl;
@@ -11,6 +11,8 @@ int main(int argc, char** argv) {
 	std::string revFile;
 	std::string posFile;
 	std::string negFile;
+	
+	std::cout << "PATH: " << argv[0] << std::flush;
 
 	switch (argc) {
 		case 1:

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include "node.h"
 
 template<typename T>

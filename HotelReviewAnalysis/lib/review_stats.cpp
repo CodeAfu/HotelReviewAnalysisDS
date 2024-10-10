@@ -41,6 +41,6 @@ void ReviewStats::log() {
 	std::cout << "Positive Num: " << numPos << std::endl;
 	std::cout << "Negative Num: " << numNeg << std::endl;
 	std::cout << "Num Words: " << numWords << std::endl;
-	std::cout << "Time Taken to Calculate: " << timeInMicroseconds << std::endl;
+	std::cout << "Time Taken to Calculate: " << timeInMicroseconds.count() << "us" << std::endl;
 }
 

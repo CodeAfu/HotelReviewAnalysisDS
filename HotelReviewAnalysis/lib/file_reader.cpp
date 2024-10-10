@@ -14,6 +14,7 @@ namespace filereader {
 		std::ifstream myFile(fileName);
 
 		if (!myFile.is_open()) {
+			throw std::runtime_error("Could not read file: " + fileName);
 			std::cerr << "Unable to open file.\n";
 			return ll;
 		}
@@ -22,7 +23,8 @@ namespace filereader {
 			ll.insertAtEnd(line);
 		}
 
-		std::cout << std::format("File Read Succesully: {}\n", fileName);
+		//std::cout << std::format("File Read Succesully: {}\n", fileName);
+		std::cout << "File Read Succesully: " << fileName << std::endl;
 		myFile.close();
 
 		return ll;
@@ -34,6 +36,7 @@ namespace filereader {
 		std::ifstream myFile(fileName);
 
 		if (!myFile.is_open()) {
+			throw std::runtime_error("Could not read file: " + fileName);
 			std::cerr << "Unable to open file.\n";
 			return ll;
 		}
@@ -48,8 +51,8 @@ namespace filereader {
 			ll.insertAtEnd(rev);
 			idx++;
 		}
-
-		std::cout << std::format("File Read Succesully: {}\n", fileName);
+		//std::cout << std::format("File Read Succesully: {}\n", fileName);
+		std::cout << "File Read Succesully: " << fileName << std::endl;
 		myFile.close();
 
 		return ll;
