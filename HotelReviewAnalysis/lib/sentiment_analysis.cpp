@@ -547,7 +547,7 @@ namespace LinkedListImpl {
 
 		const auto duration = std::chrono::duration_cast<Mu>(Timer::now() - start);
 
-		std::cout << "Operation completed in " << duration.count() << "ms" << std::endl;
+		std::cout << "Operation completed in " << duration.count() << "us" << std::endl;
 		std::cout << "\nPress any key to continue...";
 
 		std::cin.get();

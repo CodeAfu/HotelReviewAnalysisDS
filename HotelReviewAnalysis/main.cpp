@@ -27,6 +27,5 @@ int main(int argc, char** argv) {
 			std::cerr << "Usage: " << argv[0] << " [reviews_file] [positive_words_file] [negative_words_file]" << std::endl;
 			return 1;
 	}
-	
 	return 0;
 }

@@ -1,13 +1,17 @@
-<!-- # Download Here
-![One](https://i.imgur.com/gPKJZsj.png)
-![Two](https://i.imgur.com/jTcMWUG.png) -->
+## Linked List Application 
+#### Integrated with:
+- Binary Search
+- Linear Search
+- Bubble Sort
+- Quick Sort
 
 ## Compile with g++
 ### Execute run.bat
+1 - Change directory into inner project folder
 ```ps1
 cd HotelReviewAnalysis
 ```
-Try one of these:
+2 - Try one of these:
 ```ps1
 run
 run.bat
@@ -15,7 +19,10 @@ run.bat
 ./run.bat
 ```
 
-### Command
+### Compilation Command
 ```ps1
+# cmd
 g++ -Iinclude main.cpp lib/*.cpp -o HotelReviewAnalysis && HotelReviewAnalysis
+# powershell
+g++ -Iinclude main.cpp lib/*.cpp -o HotelReviewAnalysis && ./HotelReviewAnalysis
 ```
